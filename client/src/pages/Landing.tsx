@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { ArrowRight, CheckCircle2, Shield, Zap } from "lucide-react";
+import { ArrowRight, CheckCircle2, Shield, Zap, Globe, Share2 } from "lucide-react";
 import { Layout } from "@/components/Layout";
 
 export default function Landing() {
