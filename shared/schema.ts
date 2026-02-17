@@ -194,6 +194,9 @@ export const insertTenderBidSchema = createInsertSchema(tenderBids).omit({
 
 // --- Types ---
 
+export type User = typeof users.$inferSelect;
+export type UserRole = "business" | "admin" | "superadmin";
+
 export type SmeProfile = typeof smeProfiles.$inferSelect;
 export type InsertSmeProfile = z.infer<typeof insertSmeProfileSchema>;
 export type Voucher = typeof vouchers.$inferSelect;
