@@ -1,0 +1,63 @@
+Build a lightweight MVP web app in one Replit project called **“SA Government – SMME Platform”** using **React (Vite) + Node/Express** with a simple **SQLite** database (or JSON file DB if SQLite is hard). Keep it SMALL and fast to generate.
+
+## Look & Branding
+
+* Government portal style UI (clean cards, simple forms, mobile-first)
+* SA colours theme:
+
+  * Green #007A4D, Gold #FFB81C, Black #111111, Red #DE3831, Blue #002395, Background #F6F7F9
+* Header with crest placeholder + title “SA Government – SMME Digital Enablement”
+
+## Users (simple)
+
+* Roles: **Admin** and **SME**
+* Admin can issue vouchers + view basic stats
+* SME can register, redeem voucher, generate website draft, generate 3 social posts, and create an invoice PDF
+
+## MVP Features Only
+
+### 1) SME Registration
+
+* Fields: business name, owner name, phone, email, location, industry, products/services
+* POPIA consent checkbox (required)
+
+### 2) Voucher System (must work)
+
+* Subscription price: **R899/month**
+* Voucher gives **6 months active access**
+* Admin creates voucher codes (batch size input) and can download/export list
+* SME redeems a code → sets subscription active for 6 months from today
+* Show SME “days remaining”
+
+### 3) “Website Builder” (simple AI text generation)
+
+* SME answers 5 quick questions (industry, services, location, hours, style)
+* Backend generates a website draft (hero/about/services/contact + SEO title/description)
+* Show preview page + publish to `/site/:slug`
+
+### 4) Social Media Drafts
+
+* Generate 3 posts (Facebook, Instagram, LinkedIn) from the business profile + website draft
+* SME can edit and click “Copy/Export” (no real posting to APIs)
+
+### 5) Invoicing + PDF
+
+* Simple invoice form (customer, items, total)
+* Generate downloadable PDF invoice (pdf-lib)
+
+## AI (optional but supported)
+
+* If OPENAI_API_KEY exists in .env, use it for generation
+* If no key, use mocked template content so the app still works
+
+## Deliverables
+
+* Working login (basic email+password) with role-based routing
+* Minimal dashboards:
+
+  * Admin: create vouchers, view total SMEs, redeemed vouchers
+  * SME: profile, voucher status, website builder, social drafts, invoices
+* Seed users: 1 admin + 1 SME
+* README with setup/run instructions
+
+Build it with a clean folder structure: `/client` (React) and `/server` (Express). Make sure it runs on Replit with one “Run” button.
