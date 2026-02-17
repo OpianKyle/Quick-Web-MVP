@@ -1,6 +1,7 @@
 import {
   users,
   type User,
+  type UserRole,
   smeProfiles,
   type SmeProfile,
   type InsertSmeProfile,
@@ -70,12 +71,22 @@ export interface IStorage {
   listTenderBids(tenderId: number): Promise<TenderBid[]>;
   listTenderBidsAdmin(tenderId: number): Promise<Array<{ bid: TenderBid; profile: SmeProfile }>>;
   updateTenderBidStatus(id: number, status: TenderBid["status"]): Promise<TenderBid | undefined>;
+  updateUserRole(userId: string, role: UserRole): Promise<User | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
   async getUser(id: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user;
+  }
+
+  async updateUserRole(userId: string, role: UserRole): Promise<User | undefined> {
+    const [updated] = await db
+      .update(users)
+      .set({ role, updatedAt: new Date() })
+      .where(eq(users.id, userId))
+      .returning();
+    return updated;
   }
 
   async getSmeProfile(userId: string): Promise<SmeProfile | undefined> {

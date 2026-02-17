@@ -82,6 +82,18 @@ export async function registerRoutes(
     }
   });
   
+  // Promotion route for testing (DEVELOPMENT ONLY)
+  app.post("/api/admin/promote", async (req, res) => {
+    if (process.env.NODE_ENV === "production") {
+      return res.status(403).json({ message: "Not available in production" });
+    }
+    const userId = requireAuth(req, res);
+    if (!userId) return;
+
+    await storage.updateUserRole(userId, "admin");
+    res.json({ message: "Promoted to admin" });
+  });
+
   // Admin Stats
   app.get(api.sme.stats.path, async (req, res) => {
       const admin = await requireAdmin(req, res);
