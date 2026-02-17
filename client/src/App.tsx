@@ -7,17 +7,26 @@ import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
 
 import Landing from "@/pages/Landing";
+import SmeRegistration from "@/pages/SmeRegistration";
 import Dashboard from "@/pages/Dashboard";
 import Admin from "@/pages/Admin";
 import WebsiteBuilder from "@/pages/WebsiteBuilder";
 import SocialManager from "@/pages/SocialManager";
 import Invoices from "@/pages/Invoices";
 import NotFound from "@/pages/not-found";
+import { useQuery } from "@tanstack/react-query";
+import { type SmeProfile } from "@shared/schema";
 
 function Router() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
+  
+  const { data: profile, isLoading: profileLoading } = useQuery<SmeProfile>({
+    queryKey: ["/api/sme/profile"],
+    enabled: !!user,
+    retry: false,
+  });
 
-  if (isLoading) {
+  if (authLoading || (user && profileLoading)) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
         <Loader2 className="w-12 h-12 text-primary animate-spin" />
@@ -31,6 +40,16 @@ function Router() {
       <Switch>
         <Route path="/" component={Landing} />
         <Route component={() => { window.location.href = "/"; return null; }} />
+      </Switch>
+    );
+  }
+
+  // Logged in but no profile -> Registration
+  if (!profile) {
+    return (
+      <Switch>
+        <Route path="/register" component={SmeRegistration} />
+        <Route component={() => { window.location.href = "/register"; return null; }} />
       </Switch>
     );
   }
