@@ -5,7 +5,7 @@ import { api } from "@shared/routes";
 import { z } from "zod";
 import { setupAuth, registerAuthRoutes } from "./replit_integrations/auth";
 import { registerChatRoutes } from "./replit_integrations/chat";
-import { openai } from "./replit_integrations/image"; // Use OpenAI client from image integration (it's the same client)
+import { getOpenAI } from "./replit_integrations/image";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -154,7 +154,7 @@ export async function registerRoutes(
         `;
 
         // Use Replit AI (OpenAI)
-        const completion = await openai.chat.completions.create({
+        const completion = await getOpenAI().chat.completions.create({
             model: "gpt-5.1",
             messages: [{ role: "user", content: prompt }],
             response_format: { type: "json_object" },
@@ -215,7 +215,7 @@ export async function registerRoutes(
         1 for Facebook, 1 for Instagram, 1 for LinkedIn.
         Return JSON array: [{ "platform": "Facebook", "content": "..." }, ...]`;
         
-        const completion = await openai.chat.completions.create({
+        const completion = await getOpenAI().chat.completions.create({
             model: "gpt-5.1",
             messages: [{ role: "user", content: prompt }],
             response_format: { type: "json_object" },
