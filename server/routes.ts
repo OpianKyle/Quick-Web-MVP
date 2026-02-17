@@ -24,10 +24,40 @@ export async function registerRoutes(
 
   // --- API Routes ---
 
+  const getUserId = (req: any) => (req.user as any)?.claims?.sub as string | undefined;
+
+  const requireAuth = (req: any, res: any): string | undefined => {
+    if (!req.isAuthenticated?.()) {
+      res.status(401).json({ message: "Unauthorized" });
+      return undefined;
+    }
+    const userId = getUserId(req);
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return undefined;
+    }
+    return userId;
+  };
+
+  const requireAdmin = async (req: any, res: any): Promise<{ userId: string } | undefined> => {
+    const userId = requireAuth(req, res);
+    if (!userId) return undefined;
+
+    const user = await storage.getUser(userId);
+    const role = user?.role ?? "business";
+    const email = (user?.email ?? "").toLowerCase();
+    const legacyAdmin = email.includes("admin");
+    if (role !== "admin" && role !== "superadmin" && !legacyAdmin) {
+      res.status(401).json({ message: "Unauthorized" });
+      return undefined;
+    }
+    return { userId };
+  };
+
   // Get SME Profile (Current User)
   app.get(api.sme.get.path, async (req, res) => {
-    if (!req.isAuthenticated()) return res.sendStatus(401);
-    const userId = (req.user as any).claims.sub;
+    const userId = requireAuth(req, res);
+    if (!userId) return;
     
     const profile = await storage.getSmeProfile(userId);
     if (!profile) return res.status(404).json({ message: "Profile not found" });
@@ -37,8 +67,8 @@ export async function registerRoutes(
 
   // Create SME Profile
   app.post(api.sme.create.path, async (req, res) => {
-    if (!req.isAuthenticated()) return res.sendStatus(401);
-    const userId = (req.user as any).claims.sub;
+    const userId = requireAuth(req, res);
+    if (!userId) return;
 
     try {
         const input = api.sme.create.input.parse(req.body);
@@ -54,9 +84,8 @@ export async function registerRoutes(
   
   // Admin Stats
   app.get(api.sme.stats.path, async (req, res) => {
-      // Basic admin check - for MVP, anyone logged in with a specific email or just "admin" role if we had it.
-      // For now, we'll just check if they are authenticated, or check against a hardcoded email if available in claims.
-      if (!req.isAuthenticated()) return res.sendStatus(401);
+      const admin = await requireAdmin(req, res);
+      if (!admin) return;
       
       const stats = await storage.getStats();
       res.json(stats);
@@ -64,8 +93,8 @@ export async function registerRoutes(
 
   // Redeem Voucher
   app.post(api.vouchers.redeem.path, async (req, res) => {
-    if (!req.isAuthenticated()) return res.sendStatus(401);
-    const userId = (req.user as any).claims.sub;
+    const userId = requireAuth(req, res);
+    if (!userId) return;
     const profile = await storage.getSmeProfile(userId);
     if (!profile) return res.status(400).json({ message: "Create a profile first" });
 
@@ -82,22 +111,24 @@ export async function registerRoutes(
 
   // Generate Vouchers (Admin)
   app.post(api.vouchers.generate.path, async (req, res) => {
-      if (!req.isAuthenticated()) return res.sendStatus(401);
+      const admin = await requireAdmin(req, res);
+      if (!admin) return;
       const count = req.body.count || 10;
       const codes = await storage.createVouchers(count);
       res.status(201).json(codes);
   });
   
   app.get(api.vouchers.list.path, async (req, res) => {
-      if (!req.isAuthenticated()) return res.sendStatus(401);
+      const admin = await requireAdmin(req, res);
+      if (!admin) return;
       const vouchers = await storage.getAllVouchers();
       res.json(vouchers);
   });
 
   // Website Builder - Generate Draft (AI)
   app.post(api.website.generate.path, async (req, res) => {
-    if (!req.isAuthenticated()) return res.sendStatus(401);
-    const userId = (req.user as any).claims.sub;
+    const userId = requireAuth(req, res);
+    if (!userId) return;
     const profile = await storage.getSmeProfile(userId);
     if (!profile) return res.status(400).json({ message: "Create a profile first" });
     
@@ -147,8 +178,8 @@ export async function registerRoutes(
   });
   
   app.get(api.website.get.path, async (req, res) => {
-      if (!req.isAuthenticated()) return res.sendStatus(401);
-      const userId = (req.user as any).claims.sub;
+      const userId = requireAuth(req, res);
+      if (!userId) return;
       const profile = await storage.getSmeProfile(userId);
       if (!profile) return res.status(404).json({ message: "Profile not found" });
       
@@ -159,8 +190,8 @@ export async function registerRoutes(
   });
 
   app.post(api.website.publish.path, async (req, res) => {
-      if (!req.isAuthenticated()) return res.sendStatus(401);
-      const userId = (req.user as any).claims.sub;
+      const userId = requireAuth(req, res);
+      if (!userId) return;
       const profile = await storage.getSmeProfile(userId);
       if (!profile) return res.status(400).json({ message: "Create a profile first" });
       
@@ -172,8 +203,8 @@ export async function registerRoutes(
 
   // Social Media Drafts
   app.post(api.social.generate.path, async (req, res) => {
-    if (!req.isAuthenticated()) return res.sendStatus(401);
-    const userId = (req.user as any).claims.sub;
+    const userId = requireAuth(req, res);
+    if (!userId) return;
     const profile = await storage.getSmeProfile(userId);
     if (!profile) return res.status(400).json({ message: "Create a profile first" });
 
@@ -214,8 +245,8 @@ export async function registerRoutes(
   });
   
   app.get(api.social.list.path, async (req, res) => {
-      if (!req.isAuthenticated()) return res.sendStatus(401);
-      const userId = (req.user as any).claims.sub;
+      const userId = requireAuth(req, res);
+      if (!userId) return;
       const profile = await storage.getSmeProfile(userId);
       if (!profile) return res.status(404).json({ message: "Profile not found" });
       
@@ -225,8 +256,8 @@ export async function registerRoutes(
 
   // Invoices
   app.post(api.invoices.create.path, async (req, res) => {
-    if (!req.isAuthenticated()) return res.sendStatus(401);
-    const userId = (req.user as any).claims.sub;
+    const userId = requireAuth(req, res);
+    if (!userId) return;
     const profile = await storage.getSmeProfile(userId);
     if (!profile) return res.status(400).json({ message: "Create a profile first" });
     
@@ -236,13 +267,168 @@ export async function registerRoutes(
   });
   
   app.get(api.invoices.list.path, async (req, res) => {
-      if (!req.isAuthenticated()) return res.sendStatus(401);
-      const userId = (req.user as any).claims.sub;
+      const userId = requireAuth(req, res);
+      if (!userId) return;
       const profile = await storage.getSmeProfile(userId);
       if (!profile) return res.status(404).json({ message: "Profile not found" });
       
       const invoices = await storage.getInvoices(profile.id);
       res.json(invoices);
+  });
+
+  // -------------------------
+  // Job Tenders (Business)
+  // -------------------------
+  app.get(api.tenders.list.path, async (req, res) => {
+    const userId = requireAuth(req, res);
+    if (!userId) return;
+
+    const list = await storage.listTenders();
+    res.json(list);
+  });
+
+  app.get(api.tenders.get.path, async (req, res) => {
+    const userId = requireAuth(req, res);
+    if (!userId) return;
+
+    const tenderId = Number(req.params.id);
+    if (!Number.isFinite(tenderId)) return res.status(400).json({ message: "Invalid id" });
+
+    const tender = await storage.getTender(tenderId);
+    if (!tender) return res.status(404).json({ message: "Tender not found" });
+    res.json(tender);
+  });
+
+  app.get(api.tenders.myBid.path, async (req, res) => {
+    const userId = requireAuth(req, res);
+    if (!userId) return;
+
+    const tenderId = Number(req.params.id);
+    if (!Number.isFinite(tenderId)) return res.status(400).json({ message: "Invalid id" });
+
+    const profile = await storage.getSmeProfile(userId);
+    if (!profile) return res.status(400).json({ message: "Create a profile first" });
+
+    const bid = await storage.getMyTenderBid(tenderId, profile.id);
+    if (!bid) return res.status(404).json({ message: "Bid not found" });
+    res.json(bid);
+  });
+
+  app.post(api.tenders.submitBid.path, async (req, res) => {
+    const userId = requireAuth(req, res);
+    if (!userId) return;
+
+    const tenderId = Number(req.params.id);
+    if (!Number.isFinite(tenderId)) return res.status(400).json({ message: "Invalid id" });
+
+    const profile = await storage.getSmeProfile(userId);
+    if (!profile) return res.status(400).json({ message: "Create a profile first" });
+
+    const tender = await storage.getTender(tenderId);
+    if (!tender) return res.status(404).json({ message: "Tender not found" });
+    if (tender.status !== "open") return res.status(400).json({ message: "Tender is not open" });
+
+    try {
+      const input = api.tenders.submitBid.input.parse(req.body);
+      const bid = await storage.upsertTenderBid(tenderId, profile.id, input);
+      res.status(201).json(bid);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({ message: err.errors[0].message });
+      }
+      throw err;
+    }
+  });
+
+  // -------------------------
+  // Job Tenders (Admin)
+  // -------------------------
+  app.get(api.adminTenders.list.path, async (req, res) => {
+    const admin = await requireAdmin(req, res);
+    if (!admin) return;
+
+    const list = await storage.listTenders();
+    res.json(list);
+  });
+
+  app.post(api.adminTenders.create.path, async (req, res) => {
+    const admin = await requireAdmin(req, res);
+    if (!admin) return;
+
+    try {
+      const input = api.adminTenders.create.input.parse(req.body);
+      const deadlineAt = input.deadlineAt === undefined ? undefined : input.deadlineAt ? new Date(input.deadlineAt) : null;
+      const created = await storage.createTender(admin.userId, {
+        ...input,
+        deadlineAt,
+      } as any);
+      res.status(201).json(created);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({ message: err.errors[0].message });
+      }
+      throw err;
+    }
+  });
+
+  app.patch(api.adminTenders.update.path, async (req, res) => {
+    const admin = await requireAdmin(req, res);
+    if (!admin) return;
+
+    const tenderId = Number(req.params.id);
+    if (!Number.isFinite(tenderId)) return res.status(400).json({ message: "Invalid id" });
+
+    const existing = await storage.getTender(tenderId);
+    if (!existing) return res.status(404).json({ message: "Tender not found" });
+
+    try {
+      const input = api.adminTenders.update.input.parse(req.body);
+      const deadlineAt = input.deadlineAt === undefined ? undefined : input.deadlineAt ? new Date(input.deadlineAt) : null;
+      const updated = await storage.updateTender(tenderId, {
+        ...input,
+        deadlineAt,
+      } as any);
+      res.json(updated);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({ message: err.errors[0].message });
+      }
+      throw err;
+    }
+  });
+
+  app.get(api.adminTenders.bids.path, async (req, res) => {
+    const admin = await requireAdmin(req, res);
+    if (!admin) return;
+
+    const tenderId = Number(req.params.id);
+    if (!Number.isFinite(tenderId)) return res.status(400).json({ message: "Invalid id" });
+
+    const tender = await storage.getTender(tenderId);
+    if (!tender) return res.status(404).json({ message: "Tender not found" });
+
+    const bids = await storage.listTenderBidsAdmin(tenderId);
+    res.json(bids);
+  });
+
+  app.patch(api.adminTenders.updateBidStatus.path, async (req, res) => {
+    const admin = await requireAdmin(req, res);
+    if (!admin) return;
+
+    const bidId = Number(req.params.id);
+    if (!Number.isFinite(bidId)) return res.status(400).json({ message: "Invalid id" });
+
+    try {
+      const input = api.adminTenders.updateBidStatus.input.parse(req.body);
+      const updated = await storage.updateTenderBidStatus(bidId, input.status);
+      if (!updated) return res.status(404).json({ message: "Bid not found" });
+      res.json(updated);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({ message: err.errors[0].message });
+      }
+      throw err;
+    }
   });
 
   return httpServer;

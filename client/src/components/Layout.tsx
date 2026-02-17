@@ -5,6 +5,7 @@ import {
   Menu, 
   X, 
   LayoutDashboard, 
+  Briefcase,
   Globe, 
   Share2, 
   FileText, 
@@ -14,6 +15,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { isAdminUser } from "@/lib/rbac";
 
 // Static asset for Crest placeholder - using a generic shield icon if image fails
 // For production, use actual SA Crest
@@ -35,6 +37,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   // Simplified navigation items
   const navItems = [
     { label: "Dashboard", href: "/", icon: LayoutDashboard },
+    { label: "Tenders", href: "/tenders", icon: Briefcase },
     { label: "Website Builder", href: "/website", icon: Globe },
     { label: "Social Media", href: "/social", icon: Share2 },
     { label: "Invoices", href: "/invoices", icon: FileText },
@@ -45,7 +48,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
     { label: "Admin Dashboard", href: "/admin", icon: ShieldCheck },
   ];
 
-  const currentNav = user?.email?.includes("admin") ? [...navItems, ...adminItems] : navItems;
+  const currentNav = isAdminUser(user) ? [...navItems, ...adminItems] : navItems;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">

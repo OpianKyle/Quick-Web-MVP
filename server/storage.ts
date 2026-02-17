@@ -1,6 +1,26 @@
-import { users, type User, type InsertUser, smeProfiles, type SmeProfile, type InsertSmeProfile, vouchers, type Voucher, websiteDrafts, type WebsiteDraft, socialPosts, type SocialPost, invoices, type Invoice, type InsertInvoice } from "@shared/schema";
+import {
+  users,
+  type User,
+  smeProfiles,
+  type SmeProfile,
+  type InsertSmeProfile,
+  vouchers,
+  type Voucher,
+  websiteDrafts,
+  type WebsiteDraft,
+  socialPosts,
+  type SocialPost,
+  invoices,
+  type Invoice,
+  type InsertInvoice,
+  tenders,
+  type Tender,
+  type InsertTender,
+  tenderBids,
+  type TenderBid,
+} from "@shared/schema";
 import { db } from "./db";
-import { eq, count, and } from "drizzle-orm";
+import { eq, count, desc, and } from "drizzle-orm";
 
 export interface IStorage {
   // User (from Auth) - mostly handled by Auth module, but we might need helpers
@@ -33,6 +53,23 @@ export interface IStorage {
   
   // Admin Stats
   getStats(): Promise<{ totalSmes: number; activeSubscriptions: number; redeemedVouchers: number }>;
+
+  // Job Tenders
+  listTenders(): Promise<Tender[]>;
+  getTender(id: number): Promise<Tender | undefined>;
+  createTender(createdByUserId: string, tender: InsertTender): Promise<Tender>;
+  updateTender(id: number, updates: Partial<Tender>): Promise<Tender>;
+
+  // Tender bids
+  getMyTenderBid(tenderId: number, bidderProfileId: number): Promise<TenderBid | undefined>;
+  upsertTenderBid(
+    tenderId: number,
+    bidderProfileId: number,
+    bid: { amountCents?: number | null; proposal: string }
+  ): Promise<TenderBid>;
+  listTenderBids(tenderId: number): Promise<TenderBid[]>;
+  listTenderBidsAdmin(tenderId: number): Promise<Array<{ bid: TenderBid; profile: SmeProfile }>>;
+  updateTenderBidStatus(id: number, status: TenderBid["status"]): Promise<TenderBid | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -153,6 +190,85 @@ export class DatabaseStorage implements IStorage {
           activeSubscriptions: Number(activeSubsRes?.count || 0),
           redeemedVouchers: Number(redeemedVouchersRes?.count || 0),
       };
+  }
+
+  async listTenders(): Promise<Tender[]> {
+    return await db.select().from(tenders).orderBy(desc(tenders.createdAt));
+  }
+
+  async getTender(id: number): Promise<Tender | undefined> {
+    const [tender] = await db.select().from(tenders).where(eq(tenders.id, id));
+    return tender;
+  }
+
+  async createTender(createdByUserId: string, tender: InsertTender): Promise<Tender> {
+    const [created] = await db.insert(tenders).values({ ...tender, createdByUserId }).returning();
+    return created;
+  }
+
+  async updateTender(id: number, updates: Partial<Tender>): Promise<Tender> {
+    const [updated] = await db
+      .update(tenders)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(tenders.id, id))
+      .returning();
+    return updated;
+  }
+
+  async getMyTenderBid(tenderId: number, bidderProfileId: number): Promise<TenderBid | undefined> {
+    const [bid] = await db
+      .select()
+      .from(tenderBids)
+      .where(and(eq(tenderBids.tenderId, tenderId), eq(tenderBids.bidderProfileId, bidderProfileId)));
+    return bid;
+  }
+
+  async upsertTenderBid(
+    tenderId: number,
+    bidderProfileId: number,
+    bid: { amountCents?: number | null; proposal: string }
+  ): Promise<TenderBid> {
+    const [upserted] = await db
+      .insert(tenderBids)
+      .values({
+        tenderId,
+        bidderProfileId,
+        amountCents: bid.amountCents ?? null,
+        proposal: bid.proposal,
+      })
+      .onConflictDoUpdate({
+        target: [tenderBids.tenderId, tenderBids.bidderProfileId],
+        set: {
+          amountCents: bid.amountCents ?? null,
+          proposal: bid.proposal,
+          status: "submitted",
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
+    return upserted;
+  }
+
+  async listTenderBids(tenderId: number): Promise<TenderBid[]> {
+    return await db.select().from(tenderBids).where(eq(tenderBids.tenderId, tenderId)).orderBy(desc(tenderBids.createdAt));
+  }
+
+  async listTenderBidsAdmin(tenderId: number): Promise<Array<{ bid: TenderBid; profile: SmeProfile }>> {
+    return await db
+      .select({ bid: tenderBids, profile: smeProfiles })
+      .from(tenderBids)
+      .innerJoin(smeProfiles, eq(tenderBids.bidderProfileId, smeProfiles.id))
+      .where(eq(tenderBids.tenderId, tenderId))
+      .orderBy(desc(tenderBids.createdAt));
+  }
+
+  async updateTenderBidStatus(id: number, status: TenderBid["status"]): Promise<TenderBid | undefined> {
+    const [updated] = await db
+      .update(tenderBids)
+      .set({ status, updatedAt: new Date() })
+      .where(eq(tenderBids.id, id))
+      .returning();
+    return updated;
   }
 
   async seedDatabase(): Promise<void> {

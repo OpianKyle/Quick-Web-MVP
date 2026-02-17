@@ -16,13 +16,17 @@ class AuthStorage implements IAuthStorage {
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
+    // Important: don't overwrite role on every login (admins may be promoted later).
+    // We only allow role to be set on insert; updates preserve the existing role.
+    const { role: _role, ...updateFields } = userData as any;
+
     const [user] = await db
       .insert(users)
       .values(userData)
       .onConflictDoUpdate({
         target: users.id,
         set: {
-          ...userData,
+          ...updateFields,
           updatedAt: new Date(),
         },
       })

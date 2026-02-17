@@ -12,6 +12,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { Loader2, Download } from "lucide-react";
 import { Redirect } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
+import { isAdminUser } from "@/lib/rbac";
 
 export default function Admin() {
   const { user } = useAuth();
@@ -21,7 +22,7 @@ export default function Admin() {
   const [generatedCodes, setGeneratedCodes] = useState<string[]>([]);
 
   // Simple admin check
-  if (user && !user.email?.includes("admin")) {
+  if (user && !isAdminUser(user)) {
     return <Redirect to="/" />;
   }
 

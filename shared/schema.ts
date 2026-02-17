@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, jsonb, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, jsonb, varchar, uniqueIndex } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -40,6 +40,7 @@ export const smeProfilesRelations = relations(smeProfiles, ({ one, many }) => ({
   websiteDrafts: many(websiteDrafts),
   socialPosts: many(socialPosts),
   invoices: many(invoices),
+  tenderBids: many(tenderBids),
 }));
 
 export const vouchers = pgTable("vouchers", {
@@ -98,6 +99,58 @@ export const invoicesRelations = relations(invoices, ({ one }) => ({
   }),
 }));
 
+// Job Tenders (posted by Admin/Superadmin)
+export const tenders = pgTable("tenders", {
+  id: serial("id").primaryKey(),
+  createdByUserId: varchar("created_by_user_id").notNull().references(() => users.id),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  category: text("category"),
+  location: text("location"),
+  budgetCents: integer("budget_cents"),
+  deadlineAt: timestamp("deadline_at"),
+  status: text("status").notNull().default("open"), // open, closed, awarded, cancelled
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const tendersRelations = relations(tenders, ({ one, many }) => ({
+  createdBy: one(users, {
+    fields: [tenders.createdByUserId],
+    references: [users.id],
+  }),
+  bids: many(tenderBids),
+}));
+
+// Tender bids (submitted by registered businesses / SME profiles)
+export const tenderBids = pgTable(
+  "tender_bids",
+  {
+    id: serial("id").primaryKey(),
+    tenderId: integer("tender_id").notNull().references(() => tenders.id),
+    bidderProfileId: integer("bidder_profile_id").notNull().references(() => smeProfiles.id),
+    amountCents: integer("amount_cents"),
+    proposal: text("proposal").notNull(),
+    status: text("status").notNull().default("submitted"), // submitted, shortlisted, accepted, rejected, withdrawn
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    tenderBidUnique: uniqueIndex("tender_bid_unique").on(table.tenderId, table.bidderProfileId),
+  })
+);
+
+export const tenderBidsRelations = relations(tenderBids, ({ one }) => ({
+  tender: one(tenders, {
+    fields: [tenderBids.tenderId],
+    references: [tenders.id],
+  }),
+  bidderProfile: one(smeProfiles, {
+    fields: [tenderBids.bidderProfileId],
+    references: [smeProfiles.id],
+  }),
+}));
+
 // --- Schemas ---
 
 export const insertSmeProfileSchema = createInsertSchema(smeProfiles).omit({ 
@@ -122,6 +175,23 @@ export const insertInvoiceSchema = createInsertSchema(invoices).omit({
   createdAt: true,
 });
 
+export const insertTenderSchema = createInsertSchema(tenders).omit({
+  id: true,
+  createdByUserId: true,
+  status: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertTenderBidSchema = createInsertSchema(tenderBids).omit({
+  id: true,
+  tenderId: true,
+  bidderProfileId: true,
+  status: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // --- Types ---
 
 export type SmeProfile = typeof smeProfiles.$inferSelect;
@@ -131,3 +201,8 @@ export type WebsiteDraft = typeof websiteDrafts.$inferSelect;
 export type SocialPost = typeof socialPosts.$inferSelect;
 export type Invoice = typeof invoices.$inferSelect;
 export type InsertInvoice = z.infer<typeof insertInvoiceSchema>;
+
+export type Tender = typeof tenders.$inferSelect;
+export type InsertTender = z.infer<typeof insertTenderSchema>;
+export type TenderBid = typeof tenderBids.$inferSelect;
+export type InsertTenderBid = z.infer<typeof insertTenderBidSchema>;

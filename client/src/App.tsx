@@ -10,23 +10,22 @@ import Landing from "@/pages/Landing";
 import SmeRegistration from "@/pages/SmeRegistration";
 import Dashboard from "@/pages/Dashboard";
 import Admin from "@/pages/Admin";
+import Tenders from "@/pages/Tenders";
+import TenderDetail from "@/pages/TenderDetail";
 import WebsiteBuilder from "@/pages/WebsiteBuilder";
 import SocialManager from "@/pages/SocialManager";
 import Invoices from "@/pages/Invoices";
 import NotFound from "@/pages/not-found";
-import { useQuery } from "@tanstack/react-query";
-import { type SmeProfile } from "@shared/schema";
+import { useSmeProfile } from "@/hooks/use-sme";
+import { isAdminUser } from "@/lib/rbac";
 
 function Router() {
   const { user, isLoading: authLoading } = useAuth();
   
-  const { data: profile, isLoading: profileLoading } = useQuery<SmeProfile>({
-    queryKey: ["/api/sme/profile"],
-    enabled: !!user,
-    retry: false,
-  });
+  const admin = isAdminUser(user);
+  const { data: profile, isLoading: profileLoading } = useSmeProfile({ enabled: !!user && !admin });
 
-  if (authLoading || (user && profileLoading)) {
+  if (authLoading || (user && !admin && profileLoading)) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
         <Loader2 className="w-12 h-12 text-primary animate-spin" />
@@ -45,7 +44,7 @@ function Router() {
   }
 
   // Logged in but no profile -> Registration
-  if (!profile) {
+  if (!admin && !profile) {
     return (
       <Switch>
         <Route path="/register" component={SmeRegistration} />
@@ -59,6 +58,8 @@ function Router() {
     <Switch>
       <Route path="/" component={Dashboard} />
       <Route path="/admin" component={Admin} />
+      <Route path="/tenders" component={Tenders} />
+      <Route path="/tenders/:id" component={TenderDetail} />
       <Route path="/website" component={WebsiteBuilder} />
       <Route path="/social" component={SocialManager} />
       <Route path="/invoices" component={Invoices} />

@@ -51,12 +51,38 @@ function updateUserSession(
 }
 
 async function upsertUser(claims: any) {
+  const email = (claims["email"] as string | undefined)?.toLowerCase();
+
+  const parseEmailList = (value: string | undefined): Set<string> => {
+    return new Set(
+      (value ?? "")
+        .split(",")
+        .map((s) => s.trim().toLowerCase())
+        .filter(Boolean)
+    );
+  };
+
+  const superadmins = parseEmailList(process.env.SUPERADMIN_EMAILS);
+  const admins = parseEmailList(process.env.ADMIN_EMAILS);
+
+  // Bootstrap role assignment (insert only; updates preserve existing role in storage layer)
+  const bootstrapRole = () => {
+    if (!email) return undefined;
+    if (superadmins.has(email)) return "superadmin";
+    if (admins.has(email)) return "admin";
+    // Backwards-compatible heuristic for MVPs that used email matching
+    if (email.includes("superadmin")) return "superadmin";
+    if (email.includes("admin")) return "admin";
+    return undefined;
+  };
+
   await authStorage.upsertUser({
     id: claims["sub"],
     email: claims["email"],
     firstName: claims["first_name"],
     lastName: claims["last_name"],
     profileImageUrl: claims["profile_image_url"],
+    role: bootstrapRole(),
   });
 }
 

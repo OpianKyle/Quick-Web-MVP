@@ -4,9 +4,10 @@ import { type InsertSmeProfile, type InsertInvoice } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 
 // SME Profile Hooks
-export function useSmeProfile() {
+export function useSmeProfile(options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: [api.sme.get.path],
+    enabled: options?.enabled ?? true,
     queryFn: async () => {
       const res = await fetch(api.sme.get.path, { credentials: "include" });
       if (res.status === 404) return null;
