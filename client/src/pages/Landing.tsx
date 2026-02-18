@@ -1,109 +1,163 @@
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { ArrowRight, CheckCircle2, Shield, Zap, Globe, Share2 } from "lucide-react";
-import { Layout } from "@/components/Layout";
+import { ArrowRight, CheckCircle2, Shield, Zap, Globe, Share2, Building2, Landmark, Award, Flag } from "lucide-react";
 
 export default function Landing() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col font-sans">
+      {/* Official Government Header Bar */}
+      <div className="bg-[#002395] text-white py-1.5 px-4 sm:px-6 lg:px-8 flex items-center justify-between text-[10px] uppercase tracking-widest font-bold">
+        <div className="flex items-center gap-2">
+          <Flag className="w-3 h-3 text-[#FFB81C]" />
+          <span>Republic of South Africa</span>
+        </div>
+        <div className="hidden sm:block">
+          Official SMME Enablement Portal
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <nav className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-border/40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-sm">
+              <Landmark className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <span className="text-lg font-display font-bold leading-tight block">SMME Portal</span>
+              <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Digital Enablement</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <a href="/api/login" className="text-sm font-semibold hover:text-primary transition-colors">Sign In</a>
+            <a href="/api/login" className="bg-primary text-white px-5 py-2 rounded-lg text-sm font-bold hover:scale-[1.02] active:scale-[0.98] transition-all shadow-md shadow-primary/20">
+              Get Started
+            </a>
+          </div>
+        </div>
+      </nav>
+
       {/* Hero Section */}
-      <header className="bg-white border-b border-border relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 z-0 opacity-5">
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2" />
-          <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-secondary rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2" />
+      <header className="relative bg-[#F6F7F9] overflow-hidden border-b">
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="/images/sa-gov-hero.png" 
+            alt="South African Government Building"
+            className="w-full h-full object-cover opacity-20 grayscale-[0.5]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#F6F7F9] via-[#F6F7F9]/95 to-transparent" />
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 relative z-10">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 relative z-10">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
             <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
             >
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-6">
-                <Shield className="w-4 h-4" />
-                <span>Official SA Government Initiative</span>
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-8">
+                <Award className="w-3.5 h-3.5" />
+                <span>Dept of Small Business Development</span>
               </div>
               
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold text-foreground leading-tight mb-6">
-                Empowering <span className="text-primary">SMMEs</span> for the <span className="text-secondary">Digital Economy</span>
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-black text-foreground leading-[1.05] mb-8">
+                Building a <span className="text-primary underline decoration-secondary/40 underline-offset-8">Digital Nation</span>, One SMME at a Time.
               </h1>
               
-              <p className="text-lg text-muted-foreground mb-8 leading-relaxed max-w-lg">
-                Access free digital tools, website builders, and resources to grow your business. Supported by the Department of Small Business Development.
+              <p className="text-xl text-muted-foreground mb-10 leading-relaxed max-w-xl">
+                The SMME Digital Enablement Platform provides free professional tools to help South African businesses compete in the global marketplace.
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-4">
-                <a href="/api/login" className="inline-flex items-center justify-center px-8 py-4 rounded-xl bg-primary text-white font-semibold text-lg shadow-lg shadow-primary/25 hover:bg-primary/90 hover:scale-[1.02] transition-all duration-200">
-                  Register Business
-                  <ArrowRight className="ml-2 w-5 h-5" />
+              <div className="flex flex-col sm:flex-row gap-5">
+                <a href="/api/login" className="inline-flex items-center justify-center px-10 py-4 rounded-xl bg-primary text-white font-bold text-lg shadow-xl shadow-primary/30 hover:shadow-2xl hover:translate-y-[-2px] transition-all duration-300">
+                  Register Your Business
+                  <ArrowRight className="ml-2.5 w-5 h-5" />
                 </a>
-                <button className="inline-flex items-center justify-center px-8 py-4 rounded-xl bg-white border-2 border-border text-foreground font-semibold text-lg hover:bg-muted/50 transition-colors">
-                  Learn More
+                <button className="inline-flex items-center justify-center px-10 py-4 rounded-xl bg-white border-2 border-border text-foreground font-bold text-lg hover:bg-muted/30 transition-all">
+                  Portal Guide
                 </button>
+              </div>
+
+              <div className="mt-12 flex items-center gap-6 opacity-60">
+                <div className="flex flex-col">
+                  <span className="text-2xl font-bold text-foreground">50k+</span>
+                  <span className="text-xs uppercase tracking-widest font-semibold">Registered SMMEs</span>
+                </div>
+                <div className="w-px h-8 bg-border" />
+                <div className="flex flex-col">
+                  <span className="text-2xl font-bold text-foreground">R1.2B</span>
+                  <span className="text-xs uppercase tracking-widest font-semibold">Tender Opportunities</span>
+                </div>
               </div>
             </motion.div>
 
             <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative hidden md:block"
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="relative hidden lg:block"
             >
-              {/* Abstract decorative image placement */}
-              <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl border border-border">
+              <div className="relative z-10 rounded-3xl overflow-hidden shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] border-[8px] border-white ring-1 ring-black/5">
                 <img 
-                  src="https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=1000" 
-                  alt="South African Entrepreneur"
-                  className="w-full h-auto object-cover" 
+                  src="https://images.unsplash.com/photo-1521791136064-7986c2959210?auto=format&fit=crop&q=80&w=1200" 
+                  alt="Business Meeting"
+                  className="w-full aspect-[4/5] object-cover" 
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-8">
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-transparent to-transparent flex items-end p-10">
                   <div className="text-white">
-                    <p className="font-bold text-xl">"This platform transformed my local bakery into a digital brand."</p>
-                    <p className="text-white/80 mt-2">— Thandiwe M., Soweto</p>
+                    <div className="flex gap-1 mb-4">
+                      {[1,2,3,4,5].map(s => <Award key={s} className="w-4 h-4 text-secondary fill-secondary" />)}
+                    </div>
+                    <blockquote className="text-2xl font-display font-medium leading-snug">
+                      "Access to the digital economy is no longer a luxury, it's a necessity for every township business."
+                    </blockquote>
+                    <p className="mt-4 font-bold uppercase tracking-widest text-sm text-secondary">National Empowerment Vision</p>
                   </div>
                 </div>
               </div>
               
               {/* Decorative elements */}
-              <div className="absolute -top-6 -right-6 w-24 h-24 bg-secondary rounded-full opacity-20 z-0 animate-pulse" />
-              <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-primary rounded-full opacity-20 z-0" />
+              <div className="absolute -top-12 -right-12 w-48 h-48 bg-secondary/10 rounded-full blur-3xl" />
+              <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-primary/10 rounded-full blur-3xl" />
             </motion.div>
           </div>
         </div>
       </header>
 
-      {/* Features Section */}
-      <section className="py-24 bg-background">
+      {/* Services Section */}
+      <section className="py-32 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">Everything you need to succeed online</h2>
-            <p className="text-muted-foreground text-lg">We provide a comprehensive suite of digital tools designed specifically for South African small businesses.</p>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20">
+            <div className="max-w-2xl">
+              <h2 className="text-4xl md:text-5xl font-display font-black mb-6">Strategic Digital Pillar</h2>
+              <p className="text-muted-foreground text-xl leading-relaxed">
+                National digital infrastructure designed to modernize and scale small, medium, and micro enterprises across all provinces.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 text-primary font-bold uppercase tracking-widest text-sm cursor-pointer hover:gap-4 transition-all group">
+              View All Services <ArrowRight className="w-4 h-4 transition-all" />
+            </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-10">
             {[
               {
-                title: "Website Builder",
-                desc: "Create a professional business website in minutes with AI-powered templates.",
+                title: "Voucher-Linked Website Builder",
+                desc: "Redeem your government voucher to launch a professional .co.za business website instantly.",
                 icon: Globe,
-                color: "text-blue-600",
-                bg: "bg-blue-50"
+                accent: "border-t-[#007A4D]"
               },
               {
-                title: "Social Media Manager",
-                desc: "Generate and schedule engaging posts for Facebook, Instagram, and LinkedIn.",
+                title: "Verified Social Marketing",
+                desc: "Compliant digital marketing tools to reach more customers and build verified brand trust.",
                 icon: Share2,
-                color: "text-purple-600",
-                bg: "bg-purple-50"
+                accent: "border-t-[#FFB81C]"
               },
               {
-                title: "Smart Invoicing",
-                desc: "Create professional, tax-compliant invoices and track your payments easily.",
+                title: "Compliance-First Invoicing",
+                desc: "Generate professional invoices that meet national tax standards and simplify reporting.",
                 icon: Zap,
-                color: "text-secondary",
-                bg: "bg-yellow-50"
+                accent: "border-t-[#002395]"
               }
             ].map((feature, i) => (
               <motion.div 
@@ -111,14 +165,14 @@ export default function Landing() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-white p-8 rounded-2xl border border-border shadow-sm hover:shadow-lg transition-all"
+                transition={{ delay: i * 0.15 }}
+                className={`group bg-white p-10 rounded-2xl border border-border/50 shadow-sm hover:shadow-2xl hover:translate-y-[-8px] transition-all duration-500 border-t-4 ${feature.accent}`}
               >
-                <div className={`w-14 h-14 rounded-xl ${feature.bg} flex items-center justify-center mb-6`}>
-                  <feature.icon className={`w-7 h-7 ${feature.color}`} />
+                <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mb-8 group-hover:scale-110 group-hover:bg-primary/5 transition-all duration-500">
+                  <feature.icon className="w-8 h-8 text-primary" />
                 </div>
-                <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{feature.desc}</p>
+                <h3 className="text-2xl font-display font-bold mb-4">{feature.title}</h3>
+                <p className="text-muted-foreground leading-relaxed text-lg">{feature.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -126,45 +180,102 @@ export default function Landing() {
       </section>
 
       {/* Trust Section */}
-      <section className="py-20 bg-primary/5 border-y border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+      <section className="py-24 bg-[#0B1221] text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-1/3 h-full bg-primary/10 skew-x-[-15deg] transform translate-x-1/2" />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-20 items-center">
             <div>
-              <h2 className="text-3xl font-display font-bold mb-6">Government Backed, Business Ready</h2>
-              <div className="space-y-4">
+              <div className="inline-block px-4 py-1.5 bg-secondary text-[#0B1221] text-xs font-black uppercase tracking-[0.2em] rounded mb-8">
+                POPIA Compliant
+              </div>
+              <h2 className="text-4xl md:text-5xl font-display font-bold mb-8">Secure Infrastructure for National Growth</h2>
+              <p className="text-white/70 text-xl leading-relaxed mb-12">
+                All business data is hosted securely within the Republic, ensuring full compliance with POPIA regulations and supporting local tech infrastructure.
+              </p>
+              
+              <div className="space-y-6">
                 {[
-                  "Fully compliant with POPIA regulations",
-                  "Secure data hosting within South Africa",
-                  "Free .co.za domain registration assistance",
-                  "Access to funding opportunities network"
+                  "Official Government API Integration",
+                  "Secure SEDA & CIPC Data Verification",
+                  "Redeematable Digital Business Vouchers",
+                  "National SMME Support Helpdesk"
                 ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span className="text-foreground font-medium">{item}</span>
+                  <div key={i} className="flex items-center gap-4 group">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center group-hover:bg-primary transition-colors">
+                      <CheckCircle2 className="w-4 h-4 text-primary group-hover:text-white transition-colors" />
+                    </div>
+                    <span className="text-lg font-medium text-white/90">{item}</span>
                   </div>
                 ))}
               </div>
             </div>
-            <div className="relative">
-               {/* Just a placeholder for partner logos or visual */}
-               <div className="grid grid-cols-2 gap-4">
-                 <div className="bg-white p-6 rounded-xl shadow-sm border border-border flex items-center justify-center h-32">
-                   <span className="font-display font-bold text-xl text-gray-400">seda</span>
-                 </div>
-                 <div className="bg-white p-6 rounded-xl shadow-sm border border-border flex items-center justify-center h-32">
-                   <span className="font-display font-bold text-xl text-gray-400">nyda</span>
-                 </div>
-                 <div className="bg-white p-6 rounded-xl shadow-sm border border-border flex items-center justify-center h-32">
-                   <span className="font-display font-bold text-xl text-gray-400">SARS</span>
-                 </div>
-                 <div className="bg-white p-6 rounded-xl shadow-sm border border-border flex items-center justify-center h-32">
-                   <span className="font-display font-bold text-xl text-gray-400">CIPC</span>
-                 </div>
-               </div>
+
+            <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 shadow-2xl">
+              <h3 className="text-xl font-bold mb-8 text-secondary">Supporting Departments & Partners</h3>
+              <div className="grid grid-cols-2 gap-6">
+                {[
+                  { name: "Seda", desc: "Small Enterprise Development Agency" },
+                  { name: "DSBD", desc: "Dept of Small Business Development" },
+                  { name: "CIPC", desc: "Company & Intellectual Property" },
+                  { name: "NYDA", desc: "National Youth Development Agency" }
+                ].map((partner, i) => (
+                  <div key={i} className="bg-white/5 p-6 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors group cursor-default">
+                    <div className="font-display font-black text-2xl mb-1 group-hover:text-secondary transition-colors">{partner.name}</div>
+                    <div className="text-[10px] uppercase tracking-wider text-white/40 font-bold">{partner.desc}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="bg-[#F6F7F9] pt-20 pb-10 border-t">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center md:text-left">
+          <div className="flex flex-col md:flex-row justify-between items-start gap-12 mb-16">
+            <div className="max-w-sm">
+              <div className="flex items-center gap-2 mb-6 justify-center md:justify-start">
+                <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
+                  <Landmark className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-xl font-display font-bold">SMME Portal</span>
+              </div>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                An initiative of the South African Government to bridge the digital divide and foster inclusive economic growth through technology.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-12 w-full md:w-auto">
+              <div>
+                <h4 className="font-bold text-xs uppercase tracking-widest mb-6">Platform</h4>
+                <ul className="space-y-4 text-sm text-muted-foreground">
+                  <li><a href="#" className="hover:text-primary transition-colors">Digital Vouchers</a></li>
+                  <li><a href="#" className="hover:text-primary transition-colors">Tender Portal</a></li>
+                  <li><a href="#" className="hover:text-primary transition-colors">Business Support</a></li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-bold text-xs uppercase tracking-widest mb-6">Government</h4>
+                <ul className="space-y-4 text-sm text-muted-foreground">
+                  <li><a href="#" className="hover:text-primary transition-colors">Dept of Small Biz</a></li>
+                  <li><a href="#" className="hover:text-primary transition-colors">SEDA Portal</a></li>
+                  <li><a href="#" className="hover:text-primary transition-colors">POPIA Privacy</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div className="pt-10 border-t flex flex-col md:flex-row justify-between items-center gap-6">
+            <p className="text-xs text-muted-foreground font-medium">
+              © 2026 Republic of South Africa. All Rights Reserved. Official Government Portal.
+            </p>
+            <div className="flex items-center gap-6 grayscale opacity-50">
+               <Flag className="w-6 h-6" />
+               <span className="text-[10px] font-black uppercase tracking-widest">Proudly South African</span>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
