@@ -19,7 +19,9 @@ export * from "./models/chat";
 export const smeProfiles = pgTable("sme_profiles", {
   id: serial("id").primaryKey(),
   userId: varchar("user_id").notNull().references(() => users.id),
+  businessType: text("business_type").notNull().default("registered"), // registered, registering, informal
   businessName: text("business_name").notNull(),
+  registrationNumber: text("registration_number"), // For "registered"
   ownerName: text("owner_name").notNull(),
   phone: text("phone").notNull(),
   email: text("email").notNull(),
@@ -163,6 +165,8 @@ export const insertSmeProfileSchema = createInsertSchema(smeProfiles).omit({
   subscriptionStatus: true, 
   subscriptionExpiry: true, 
   createdAt: true 
+}).extend({
+  businessType: z.enum(["registered", "registering", "informal"]),
 });
 
 export const insertVoucherSchema = createInsertSchema(vouchers).omit({

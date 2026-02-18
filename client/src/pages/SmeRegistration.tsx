@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -16,6 +17,14 @@ const registrationSchema = insertSmeProfileSchema.extend({
   popiaConsent: z.boolean().refine((v) => v === true, {
     message: "You must consent to POPIA to continue",
   }),
+}).superRefine((data, ctx) => {
+  if (data.businessType === "registered" && !data.registrationNumber) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Registration number is required for registered businesses",
+      path: ["registrationNumber"],
+    });
+  }
 });
 
 type RegistrationData = z.infer<typeof registrationSchema>;
@@ -27,7 +36,9 @@ export default function SmeRegistration() {
   const form = useForm<RegistrationData>({
     resolver: zodResolver(registrationSchema),
     defaultValues: {
+      businessType: "registered",
       businessName: "",
+      registrationNumber: "",
       ownerName: "",
       phone: "",
       email: "",
@@ -37,6 +48,8 @@ export default function SmeRegistration() {
       popiaConsent: false,
     },
   });
+
+  const businessType = form.watch("businessType");
 
   const mutation = useMutation({
     mutationFn: async (data: RegistrationData) => {
@@ -72,6 +85,29 @@ export default function SmeRegistration() {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit((data) => mutation.mutate(data))} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="businessType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Business Type</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger data-testid="select-business-type">
+                          <SelectValue placeholder="Select business type" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="registered">I have a registration number</SelectItem>
+                        <SelectItem value="registering">I'm still registering</SelectItem>
+                        <SelectItem value="informal">Informal trader / Spaza shop</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
@@ -86,11 +122,26 @@ export default function SmeRegistration() {
                     </FormItem>
                   )}
                 />
+                {businessType === "registered" && (
+                  <FormField
+                    control={form.control}
+                    name="registrationNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Registration Number</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter registration number" {...field} data-testid="input-registration-number" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
                 <FormField
                   control={form.control}
                   name="ownerName"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className={businessType !== "registered" ? "md:col-span-1" : ""}>
                       <FormLabel>Owner Name</FormLabel>
                       <FormControl>
                         <Input placeholder="Enter owner name" {...field} data-testid="input-owner-name" />
