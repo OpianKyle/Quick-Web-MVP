@@ -26,6 +26,8 @@ export const smeProfiles = pgTable("sme_profiles", {
   location: text("location").notNull(),
   industry: text("industry").notNull(),
   productsServices: text("products_services").notNull(),
+  registrationType: text("registration_type").notNull().default("registered"), // registered, registering, informal
+  registrationNumber: text("registration_number"),
   taxNumber: text("tax_number"),
   beeLevel: text("bee_level"),
   csdNumber: text("csd_number"),

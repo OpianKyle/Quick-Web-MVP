@@ -12,10 +12,20 @@ import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { z } from "zod";
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 const registrationSchema = insertSmeProfileSchema.extend({
   popiaConsent: z.boolean().refine((v) => v === true, {
     message: "You must consent to POPIA to continue",
   }),
+  registrationType: z.enum(["registered", "registering", "informal"]),
+  registrationNumber: z.string().optional(),
 });
 
 type RegistrationData = z.infer<typeof registrationSchema>;
@@ -34,9 +44,13 @@ export default function SmeRegistration() {
       location: "",
       industry: "",
       productsServices: "",
+      registrationType: "registered",
+      registrationNumber: "",
       popiaConsent: false,
     },
   });
+
+  const regType = form.watch("registrationType");
 
   const mutation = useMutation({
     mutationFn: async (data: RegistrationData) => {
@@ -143,6 +157,45 @@ export default function SmeRegistration() {
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="registrationType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Business Type</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger data-testid="select-registration-type">
+                          <SelectValue placeholder="Select business registration status" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="registered">I have a registration number</SelectItem>
+                        <SelectItem value="registering">I'm still registering</SelectItem>
+                        <SelectItem value="informal">Informal trader / Spaza shop</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {regType === "registered" && (
+                <FormField
+                  control={form.control}
+                  name="registrationNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Registration Number</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. 2023/123456/07" {...field} data-testid="input-registration-number" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
 
               <FormField
                 control={form.control}
