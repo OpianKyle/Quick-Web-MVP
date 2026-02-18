@@ -30,7 +30,7 @@ export default function SocialManager() {
   };
 
   return (
-    <Layout>
+    <>
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
@@ -90,6 +90,6 @@ export default function SocialManager() {
           ))}
         </div>
       </div>
-    </Layout>
+    </>
   );
 }

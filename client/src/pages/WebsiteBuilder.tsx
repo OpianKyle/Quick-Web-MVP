@@ -20,7 +20,7 @@ export default function WebsiteBuilder() {
   if (isLoading) return <div className="p-8"><Loader2 className="animate-spin" /></div>;
 
   return (
-    <Layout>
+    <>
       <div className="max-w-5xl mx-auto space-y-8">
         <div className="flex justify-between items-center">
           <div>
@@ -132,6 +132,6 @@ export default function WebsiteBuilder() {
           </div>
         )}
       </div>
-    </Layout>
+    </>
   );
 }

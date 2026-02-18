@@ -56,37 +56,31 @@ export default function TenderDetail({ params }: { params: { id: string } }) {
 
   if (!Number.isFinite(tenderId)) {
     return (
-      <Layout>
-        <Card>
-          <CardContent className="py-10 text-center text-muted-foreground">Invalid tender id.</CardContent>
-        </Card>
-      </Layout>
+      <Card>
+        <CardContent className="py-10 text-center text-muted-foreground">Invalid tender id.</CardContent>
+      </Card>
     );
   }
 
   if (isLoading) {
     return (
-      <Layout>
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <Loader2 className="w-4 h-4 animate-spin" />
-          Loading tender…
-        </div>
-      </Layout>
+      <div className="flex items-center gap-2 text-muted-foreground">
+        <Loader2 className="w-4 h-4 animate-spin" />
+        Loading tender…
+      </div>
     );
   }
 
   if (!tender) {
     return (
-      <Layout>
-        <Card>
-          <CardContent className="py-10 text-center text-muted-foreground">Tender not found.</CardContent>
-        </Card>
-      </Layout>
+      <Card>
+        <CardContent className="py-10 text-center text-muted-foreground">Tender not found.</CardContent>
+      </Card>
     );
   }
 
   return (
-    <Layout>
+    <>
       <div className="space-y-6">
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -253,7 +247,7 @@ export default function TenderDetail({ params }: { params: { id: string } }) {
           </Card>
         )}
       </div>
-    </Layout>
+    </>
   );
 }
 

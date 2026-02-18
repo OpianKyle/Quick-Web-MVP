@@ -79,7 +79,7 @@ export default function Invoices() {
   };
 
   return (
-    <Layout>
+    <>
       <div className="space-y-8">
         <div className="flex justify-between items-center">
           <div>
@@ -178,6 +178,6 @@ export default function Invoices() {
           )}
         </div>
       </div>
-    </Layout>
+    </>
   );
 }
