@@ -5,36 +5,37 @@
 @tailwind utilities;
 
 :root {
-  /* Professional Enterprise Palette */
-  --background: 210 20% 98%; /* Very light grey-blue */
-  --foreground: 224 71% 4%;
+  /* South African Government Palette */
+  /* Green: #007749, Black: #000000, Gold: #FFB81C, White: #FFFFFF, Red: #E03C31, Blue: #001489 */
+  --background: 0 0% 100%;
+  --foreground: 0 0% 0%;
   
   --card: 0 0% 100%;
-  --card-foreground: 224 71% 4%;
+  --card-foreground: 0 0% 0%;
   
   --popover: 0 0% 100%;
-  --popover-foreground: 224 71% 4%;
+  --popover-foreground: 0 0% 0%;
   
-  --primary: 221 83% 53%;   /* Modern Blue */
-  --primary-foreground: 210 40% 98%;
+  --primary: 157 100% 23%;   /* SA Green #007749 */
+  --primary-foreground: 0 0% 100%;
   
-  --secondary: 210 40% 96%;
-  --secondary-foreground: 222 47% 11%;
+  --secondary: 42 100% 55%;  /* SA Gold #FFB81C */
+  --secondary-foreground: 0 0% 0%;
   
-  --muted: 210 40% 96%;
-  --muted-foreground: 215 16% 47%;
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 45%;
   
-  --accent: 210 40% 96%;
-  --accent-foreground: 222 47% 11%;
+  --accent: 231 100% 27%;    /* SA Blue #001489 */
+  --accent-foreground: 0 0% 100%;
   
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 210 40% 98%;
+  --destructive: 4 75% 54%;  /* SA Red #E03C31 */
+  --destructive-foreground: 0 0% 100%;
 
-  --border: 214 32% 91%;
-  --input: 214 32% 91%;
-  --ring: 221 83% 53%;
+  --border: 0 0% 89%;
+  --input: 0 0% 89%;
+  --ring: 157 100% 23%;
   
-  --radius: 0.75rem; /* Larger radius for modern feel */
+  --radius: 0.5rem;
   
   --font-sans: 'Inter', sans-serif;
   --font-display: 'Inter', sans-serif;
