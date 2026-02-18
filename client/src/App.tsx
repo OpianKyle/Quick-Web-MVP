@@ -15,6 +15,7 @@ import TenderDetail from "@/pages/TenderDetail";
 import WebsiteBuilder from "@/pages/WebsiteBuilder";
 import SocialManager from "@/pages/SocialManager";
 import Invoices from "@/pages/Invoices";
+import TaxCompliance from "@/pages/TaxCompliance";
 import NotFound from "@/pages/not-found";
 import { useSmeProfile } from "@/hooks/use-sme";
 import { isAdminUser } from "@/lib/rbac";
@@ -79,6 +80,7 @@ function Router() {
               <Route path="/website" component={WebsiteBuilder} />
               <Route path="/social" component={SocialManager} />
               <Route path="/invoices" component={Invoices} />
+              <Route path="/tax" component={TaxCompliance} />
               <Route component={NotFound} />
             </Switch>
           </div>

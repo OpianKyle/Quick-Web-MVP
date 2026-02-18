@@ -41,6 +41,7 @@ export function AppSidebar() {
     { label: "Website Builder", href: "/website", icon: Globe },
     { label: "Social Media", href: "/social", icon: Share2 },
     { label: "Invoices", href: "/invoices", icon: FileText },
+    { label: "Tax & Compliance", href: "/tax", icon: ShieldCheck },
   ];
 
   const adminItems = [
