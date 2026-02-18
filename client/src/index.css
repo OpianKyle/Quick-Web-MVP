@@ -5,60 +5,64 @@
 @tailwind utilities;
 
 :root {
-  /* SA Government Inspired Palette */
-  --background: 220 14% 97%; /* #F6F7F9 */
-  --foreground: 0 0% 7%;     /* #111111 */
+  /* Professional Enterprise Palette */
+  --background: 210 20% 98%; /* Very light grey-blue */
+  --foreground: 224 71% 4%;
   
   --card: 0 0% 100%;
-  --card-foreground: 0 0% 7%;
+  --card-foreground: 224 71% 4%;
   
   --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 7%;
+  --popover-foreground: 224 71% 4%;
   
-  --primary: 158 100% 24%;   /* #007A4D - SA Green */
-  --primary-foreground: 0 0% 100%;
+  --primary: 221 83% 53%;   /* Modern Blue */
+  --primary-foreground: 210 40% 98%;
   
-  --secondary: 41 100% 55%;  /* #FFB81C - SA Gold */
-  --secondary-foreground: 0 0% 7%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222 47% 11%;
   
-  --muted: 220 14% 94%;
-  --muted-foreground: 220 10% 45%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%;
   
-  --accent: 226 100% 29%;    /* #002395 - SA Blue (used as accent) */
-  --accent-foreground: 0 0% 100%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 222 47% 11%;
   
-  --destructive: 3 73% 53%;  /* #DE3831 - SA Red */
-  --destructive-foreground: 0 0% 100%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
 
-  --border: 220 13% 91%;
-  --input: 220 13% 91%;
-  --ring: 158 100% 24%;
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  --ring: 221 83% 53%;
   
-  --radius: 0.5rem;
+  --radius: 0.75rem; /* Larger radius for modern feel */
   
   --font-sans: 'Inter', sans-serif;
-  --font-display: 'Playfair Display', serif;
+  --font-display: 'Inter', sans-serif;
 }
 
 @layer base {
   body {
-    @apply bg-background text-foreground antialiased font-sans;
+    @apply bg-[#F8FAFC] text-foreground antialiased font-sans;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display font-bold tracking-tight text-foreground;
+    @apply font-sans font-bold tracking-tight text-slate-900;
   }
 }
 
 @layer components {
   .gov-container {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    @apply max-w-7xl mx-auto px-6 lg:px-8;
   }
   
   .gov-card {
-    @apply bg-white rounded-xl border border-border/60 shadow-sm hover:shadow-md transition-shadow duration-200;
+    @apply bg-white rounded-2xl border border-slate-200/60 shadow-[0_2px_4px_rgba(0,0,0,0.02),0_1px_0_rgba(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300;
   }
   
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-xl;
+  }
+
   .gov-button {
     @apply inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2;
   }

@@ -41,28 +41,29 @@ export function DashboardStats({ totalSmes, activeSubscriptions, redeemedVoucher
   ];
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
       {stats.map((stat, i) => (
         <motion.div
           key={stat.title}
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: i * 0.1 }}
+          transition={{ delay: i * 0.1, type: "spring", stiffness: 100 }}
         >
-          <Card className="group hover:shadow-lg transition-all border-none bg-white/50 backdrop-blur-sm ring-1 ring-border/50 hover:ring-primary/30">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-semibold tracking-wide uppercase text-muted-foreground/80">
+          <Card className="group relative overflow-hidden hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] transition-all duration-500 border-none bg-white rounded-3xl p-2 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
+            <div className={`absolute top-0 right-0 w-32 h-32 ${stat.bg} opacity-20 rounded-full -mr-16 -mt-16 blur-3xl group-hover:scale-150 transition-transform duration-700`} />
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 relative z-10">
+              <CardTitle className="text-sm font-black tracking-[0.15em] uppercase text-slate-400">
                 {stat.title}
               </CardTitle>
-              <div className={`p-2.5 rounded-xl ${stat.bg} group-hover:scale-110 transition-transform shadow-sm`}>
-                <stat.icon className={`h-5 w-5 ${stat.color}`} />
+              <div className={`p-3.5 rounded-2xl ${stat.bg} group-hover:rotate-12 transition-all duration-500 shadow-sm shadow-black/5`}>
+                <stat.icon className={`h-6 w-6 ${stat.color}`} />
               </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold font-display tracking-tight">{stat.value}</div>
-              <div className="flex items-center gap-1.5 mt-2">
-                <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">+20.1%</span>
-                <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">vs last month</span>
+            <CardContent className="relative z-10">
+              <div className="text-4xl font-black font-display tracking-tight text-slate-900 mb-3">{stat.value}</div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-100">+24.5%</span>
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Growth Trend</span>
               </div>
             </CardContent>
           </Card>

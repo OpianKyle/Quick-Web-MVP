@@ -116,27 +116,27 @@ export default function Dashboard() {
     <>
       <OnboardingDialog open={showOnboarding} onOpenChange={setShowOnboarding} />
 
-      <div className="space-y-8 pb-10">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b pb-8">
-          <div className="space-y-1">
-            <h1 className="text-4xl font-display font-bold tracking-tight text-foreground">
-              Welcome back, <span className="text-primary">{user?.firstName || "Entrepreneur"}</span>
+      <div className="space-y-10 pb-12 max-w-[1600px] mx-auto">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-10 border-b border-slate-200/60">
+          <div className="space-y-2">
+            <h1 className="text-5xl font-bold tracking-tight text-slate-900">
+              Good morning, <span className="text-blue-600">{user?.firstName || "Partner"}</span>
             </h1>
-            <p className="text-lg text-muted-foreground">
-              {admin ? "System administration and platform oversight." : "Monitor your business growth and digital presence."}
+            <p className="text-xl text-slate-500 font-medium">
+              {admin ? "System administration and ecosystem oversight." : "Your business growth overview and digital tools."}
             </p>
           </div>
           
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             {admin ? (
-               <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg font-semibold shadow-sm">
+               <div className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-blue-50 text-blue-700 border border-blue-100 rounded-xl font-bold shadow-sm ring-1 ring-blue-200/50">
                  <ShieldCheck className="w-5 h-5" />
-                 Administrator
+                 Platform Admin
                </div>
             ) : profile?.subscriptionStatus === "active" ? (
-               <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg font-semibold shadow-sm">
+               <div className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-xl font-bold shadow-sm ring-1 ring-emerald-200/50">
                  <CheckCircle className="w-5 h-5" />
-                 Premium Member
+                 Premium Verified
                </div>
             ) : (
               <VoucherRedemptionCard />
@@ -146,88 +146,95 @@ export default function Dashboard() {
 
         {/* Analytics Section */}
         {stats && (
-          <div className="space-y-8">
+          <div className="space-y-10">
             <DashboardStats 
               totalSmes={stats.totalSmes}
               activeSubscriptions={stats.activeSubscriptions}
               redeemedVouchers={stats.redeemedVouchers}
             />
             
-            <div className="grid lg:grid-cols-3 gap-8">
-              <Card className="lg:col-span-2 shadow-sm border-border/50 bg-white/50 backdrop-blur-sm">
-                <CardHeader className="flex flex-row items-center justify-between border-b bg-muted/5 pb-4">
-                  <div>
-                    <CardTitle className="text-xl font-bold flex items-center gap-2">
-                      <TrendingUp className="w-5 h-5 text-primary" />
-                      Platform Performance
+            <div className="grid lg:grid-cols-3 gap-10">
+              <Card className="lg:col-span-2 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border-slate-200/60 bg-white rounded-2xl overflow-hidden">
+                <CardHeader className="flex flex-row items-center justify-between border-b border-slate-50 p-8">
+                  <div className="space-y-1">
+                    <CardTitle className="text-2xl font-bold flex items-center gap-3 text-slate-900">
+                      <div className="p-2 bg-blue-50 rounded-lg">
+                        <TrendingUp className="w-6 h-6 text-blue-600" />
+                      </div>
+                      Network Activity
                     </CardTitle>
-                    <CardDescription>Daily engagement metrics for the current week</CardDescription>
+                    <CardDescription className="text-base text-slate-500">Real-time engagement tracking</CardDescription>
                   </div>
-                  <Button variant="outline" size="sm" className="font-semibold shadow-sm">View Detailed Report</Button>
+                  <Button variant="outline" size="sm" className="font-bold border-slate-200 text-slate-600 hover:bg-slate-50 shadow-sm px-6 h-10">
+                    Analytics Report
+                  </Button>
                 </CardHeader>
-                <CardContent className="h-[300px] pt-8">
+                <CardContent className="h-[340px] p-8 pt-10">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--muted))" />
+                    <BarChart data={chartData} margin={{ top: 0, right: 0, left: -25, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
                       <XAxis 
                         dataKey="name" 
                         tickLine={false} 
                         axisLine={false} 
-                        fontSize={12} 
-                        tick={{ fill: 'hsl(var(--muted-foreground))', fontWeight: 500 }}
+                        fontSize={13} 
+                        tick={{ fill: '#64748B', fontWeight: 600 }}
+                        dy={10}
                       />
                       <YAxis 
                         tickLine={false} 
                         axisLine={false} 
-                        fontSize={12} 
-                        tick={{ fill: 'hsl(var(--muted-foreground))', fontWeight: 500 }}
+                        fontSize={13} 
+                        tick={{ fill: '#64748B', fontWeight: 600 }}
                       />
                       <Tooltip 
-                        cursor={{ fill: 'hsl(var(--muted)/0.4)' }}
+                        cursor={{ fill: '#F8FAFC' }}
                         contentStyle={{ 
-                          borderRadius: '12px', 
-                          border: '1px solid hsl(var(--border))', 
-                          boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
-                          padding: '12px'
+                          borderRadius: '16px', 
+                          border: 'none', 
+                          boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)',
+                          padding: '16px'
                         }}
                       />
-                      <Bar dataKey="usage" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} barSize={40} />
+                      <Bar dataKey="usage" fill="#3B82F6" radius={[8, 8, 0, 0]} barSize={45} />
                     </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
               </Card>
 
-              <Card className="shadow-sm border-border/50 bg-white/50 backdrop-blur-sm">
-                <CardHeader className="border-b bg-muted/5 pb-4">
-                  <CardTitle className="text-xl font-bold flex items-center gap-2">
-                    <Activity className="w-5 h-5 text-secondary" />
-                    Key Performance Indicators
-                  </CardTitle>
-                  <CardDescription>Critical business health markers</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6 pt-6">
-                  <div className="flex justify-between items-center p-4 rounded-xl bg-white border border-border/50 shadow-sm transition-all hover:border-primary/20">
-                    <div className="space-y-1">
-                      <div className="text-sm font-semibold text-foreground">Voucher Conversion</div>
-                      <div className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Successful redemptions</div>
+              <Card className="shadow-[0_8px_30px_rgb(0,0,0,0.04)] border-slate-200/60 bg-white rounded-2xl overflow-hidden">
+                <CardHeader className="border-b border-slate-50 p-8">
+                  <CardTitle className="text-2xl font-bold flex items-center gap-3 text-slate-900">
+                    <div className="p-2 bg-amber-50 rounded-lg">
+                      <Activity className="w-6 h-6 text-amber-600" />
                     </div>
-                    <div className="text-2xl font-bold text-primary">
+                    Market Vitals
+                  </CardTitle>
+                  <CardDescription className="text-base text-slate-500">Core ecosystem performance</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6 p-8">
+                  <div className="group flex justify-between items-center p-6 rounded-2xl bg-slate-50 border border-slate-100 transition-all hover:bg-white hover:border-blue-200 hover:shadow-md">
+                    <div className="space-y-1">
+                      <div className="text-sm font-bold text-slate-400 uppercase tracking-widest">Conversion</div>
+                      <div className="text-lg font-bold text-slate-900">Voucher Redemptions</div>
+                    </div>
+                    <div className="text-3xl font-black text-blue-600">
                       {Math.round((stats.redeemedVouchers / (stats.totalSmes || 1)) * 100)}%
                     </div>
                   </div>
-                  <div className="flex justify-between items-center p-4 rounded-xl bg-white border border-border/50 shadow-sm transition-all hover:border-primary/20">
+                  <div className="group flex justify-between items-center p-6 rounded-2xl bg-slate-50 border border-slate-100 transition-all hover:bg-white hover:border-emerald-200 hover:shadow-md">
                     <div className="space-y-1">
-                      <div className="text-sm font-semibold text-foreground">Platform Stability</div>
-                      <div className="text-xs text-muted-foreground uppercase tracking-wider font-medium">System uptime status</div>
+                      <div className="text-sm font-bold text-slate-400 uppercase tracking-widest">Stability</div>
+                      <div className="text-lg font-bold text-slate-900">Platform Health</div>
                     </div>
-                    <div className="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-md border border-emerald-200 uppercase tracking-tighter">Optimal</div>
+                    <div className="text-sm font-black text-emerald-700 bg-emerald-100/80 px-3 py-1.5 rounded-lg border border-emerald-200 uppercase tracking-tight">Optimal</div>
                   </div>
-                  <div className="flex justify-between items-center p-4 rounded-xl bg-white border border-border/50 shadow-sm transition-all hover:border-primary/20">
+                  <div className="group flex justify-between items-center p-6 rounded-2xl bg-slate-50 border border-slate-100 transition-all hover:bg-white hover:border-amber-200 hover:shadow-md">
                     <div className="space-y-1">
-                      <div className="text-sm font-semibold text-foreground">Network Growth</div>
-                      <div className="text-xs text-muted-foreground uppercase tracking-wider font-medium">New signups (24h)</div>
+                      <div className="text-sm font-bold text-slate-400 uppercase tracking-widest">Growth</div>
+                      <div className="text-lg font-bold text-slate-900">New Partners</div>
                     </div>
-                    <div className="text-2xl font-bold text-secondary">+12</div>
+                    <div className="text-3xl font-black text-amber-600">+12</div>
                   </div>
                 </CardContent>
               </Card>
@@ -235,32 +242,32 @@ export default function Dashboard() {
           </div>
         )}
 
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="md:col-span-2 space-y-8">
+        <div className="grid md:grid-cols-3 gap-10">
+          <div className="md:col-span-2 space-y-10">
             {admin && (
-              <Card className="border-primary/20 shadow-sm overflow-hidden bg-white/50 backdrop-blur-sm">
-                <div className="h-2 bg-primary" />
-                <CardHeader>
-                  <CardTitle className="text-2xl font-bold">Administrative Console</CardTitle>
-                  <CardDescription className="text-base">High-level management of the SME ecosystem</CardDescription>
+              <Card className="border-blue-100 shadow-[0_20px_50px_rgba(59,130,246,0.05)] overflow-hidden bg-white rounded-3xl">
+                <div className="h-2.5 bg-gradient-to-r from-blue-600 to-indigo-600" />
+                <CardHeader className="p-8">
+                  <CardTitle className="text-3xl font-bold text-slate-900">Enterprise Control</CardTitle>
+                  <CardDescription className="text-lg font-medium text-slate-500">Centralized ecosystem management and oversight</CardDescription>
                 </CardHeader>
-                <CardContent className="grid sm:grid-cols-2 gap-6 pb-8">
+                <CardContent className="grid sm:grid-cols-2 gap-8 p-8 pt-0">
                   <Link href="/admin">
-                    <div className="group p-6 rounded-2xl border border-border bg-white hover:border-primary/50 hover:bg-primary/[0.02] transition-all cursor-pointer shadow-sm hover:shadow-md">
-                      <div className="h-12 w-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-inner">
-                        <ShieldCheck className="w-6 h-6" />
+                    <div className="group p-8 rounded-2xl border border-slate-100 bg-slate-50/50 hover:border-blue-200 hover:bg-white hover:shadow-xl transition-all cursor-pointer">
+                      <div className="h-14 w-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg shadow-blue-200">
+                        <ShieldCheck className="w-7 h-7" />
                       </div>
-                      <h3 className="font-bold text-xl text-foreground">Governance Portal</h3>
-                      <p className="text-sm text-muted-foreground mt-2 leading-relaxed font-medium">Oversee vouchers, user auditing, and strategic tender placements.</p>
+                      <h3 className="font-bold text-2xl text-slate-900">Governance</h3>
+                      <p className="text-base text-slate-500 mt-3 leading-relaxed">System-wide auditing, user validation, and voucher lifecycle management.</p>
                     </div>
                   </Link>
                   <Link href="/tenders">
-                    <div className="group p-6 rounded-2xl border border-border bg-white hover:border-primary/50 hover:bg-primary/[0.02] transition-all cursor-pointer shadow-sm hover:shadow-md">
-                      <div className="h-12 w-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-inner">
-                        <Briefcase className="w-6 h-6" />
+                    <div className="group p-8 rounded-2xl border border-slate-100 bg-slate-50/50 hover:border-blue-200 hover:bg-white hover:shadow-xl transition-all cursor-pointer">
+                      <div className="h-14 w-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg shadow-blue-200">
+                        <Briefcase className="w-7 h-7" />
                       </div>
-                      <h3 className="font-bold text-xl text-foreground">Tender Pipeline</h3>
-                      <p className="text-sm text-muted-foreground mt-2 leading-relaxed font-medium">Facilitate economic growth by managing public and private sector opportunities.</p>
+                      <h3 className="font-bold text-2xl text-slate-900">Opportunities</h3>
+                      <p className="text-base text-slate-500 mt-3 leading-relaxed">Strategic tender pipeline management and corporate partnership alignment.</p>
                     </div>
                   </Link>
                 </CardContent>
@@ -268,39 +275,39 @@ export default function Dashboard() {
             )}
 
             {profile && (
-              <Card className="border-border shadow-sm overflow-hidden bg-white/50 backdrop-blur-sm">
-                <CardHeader className="bg-muted/10 border-b p-6">
-                  <CardTitle className="text-2xl font-bold">Digital Enablement Suite</CardTitle>
-                  <CardDescription className="text-base font-medium">Professional tools to scale your business operations</CardDescription>
+              <Card className="border-slate-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden bg-white rounded-3xl">
+                <CardHeader className="bg-slate-50/50 border-b border-slate-100 p-8">
+                  <CardTitle className="text-3xl font-bold text-slate-900">Digital Suite</CardTitle>
+                  <CardDescription className="text-lg font-medium text-slate-500">Advanced professional tools to scale your operations</CardDescription>
                 </CardHeader>
-                <CardContent className="grid sm:grid-cols-3 gap-6 p-8">
+                <CardContent className="grid sm:grid-cols-3 gap-8 p-10">
                   <Link href="/website">
-                    <div className="group p-6 rounded-2xl border border-border bg-white hover:border-blue-400 hover:bg-blue-50/50 transition-all cursor-pointer text-center shadow-sm">
-                      <div className="h-14 w-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-4 group-hover:rotate-6 transition-transform shadow-inner">
-                        <Store className="w-7 h-7" />
+                    <div className="group p-8 rounded-3xl border border-slate-100 bg-white hover:border-blue-400 hover:bg-blue-50/30 transition-all cursor-pointer text-center shadow-sm hover:shadow-lg">
+                      <div className="h-16 w-16 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-5 group-hover:rotate-6 transition-transform shadow-inner">
+                        <Store className="w-8 h-8" />
                       </div>
-                      <h3 className="font-bold text-lg text-foreground">Web Presence</h3>
-                      <p className="text-xs text-muted-foreground mt-2 font-semibold uppercase tracking-tighter">Manage storefront</p>
+                      <h3 className="font-bold text-xl text-slate-900">Web</h3>
+                      <p className="text-xs text-slate-400 mt-2 font-bold uppercase tracking-widest">Storefront</p>
                     </div>
                   </Link>
                   
                   <Link href="/social">
-                    <div className="group p-6 rounded-2xl border border-border bg-white hover:border-purple-400 hover:bg-purple-50/50 transition-all cursor-pointer text-center shadow-sm">
-                      <div className="h-14 w-14 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center mx-auto mb-4 group-hover:rotate-6 transition-transform shadow-inner">
-                        <Share2 className="w-7 h-7" />
+                    <div className="group p-8 rounded-3xl border border-slate-100 bg-white hover:border-purple-400 hover:bg-purple-50/30 transition-all cursor-pointer text-center shadow-sm hover:shadow-lg">
+                      <div className="h-16 w-16 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center mx-auto mb-5 group-hover:rotate-6 transition-transform shadow-inner">
+                        <Share2 className="w-8 h-8" />
                       </div>
-                      <h3 className="font-bold text-lg text-foreground">Social Connect</h3>
-                      <p className="text-xs text-muted-foreground mt-2 font-semibold uppercase tracking-tighter">Marketing reach</p>
+                      <h3 className="font-bold text-xl text-slate-900">Social</h3>
+                      <p className="text-xs text-slate-400 mt-2 font-bold uppercase tracking-widest">Presence</p>
                     </div>
                   </Link>
 
                   <Link href="/invoices">
-                    <div className="group p-6 rounded-2xl border border-border bg-white hover:border-amber-400 hover:bg-amber-50/50 transition-all cursor-pointer text-center shadow-sm">
-                      <div className="h-14 w-14 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-4 group-hover:rotate-6 transition-transform shadow-inner">
-                        <FileText className="w-7 h-7" />
+                    <div className="group p-8 rounded-3xl border border-slate-100 bg-white hover:border-amber-400 hover:bg-amber-50/30 transition-all cursor-pointer text-center shadow-sm hover:shadow-lg">
+                      <div className="h-16 w-16 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-5 group-hover:rotate-6 transition-transform shadow-inner">
+                        <FileText className="w-8 h-8" />
                       </div>
-                      <h3 className="font-bold text-lg text-foreground">Finance Hub</h3>
-                      <p className="text-xs text-muted-foreground mt-2 font-semibold uppercase tracking-tighter">Smart billing</p>
+                      <h3 className="font-bold text-xl text-slate-900">Finance</h3>
+                      <p className="text-xs text-slate-400 mt-2 font-bold uppercase tracking-widest">Invoicing</p>
                     </div>
                   </Link>
                 </CardContent>
@@ -308,50 +315,50 @@ export default function Dashboard() {
             )}
           </div>
 
-          <div className="space-y-8">
+          <div className="space-y-10">
             {!admin && <DevAdminPromotion />}
 
             {profile && (
-              <Card className="shadow-sm border-border bg-white/50 backdrop-blur-sm overflow-hidden">
-                <CardHeader className="border-b bg-muted/10 p-5">
-                  <CardTitle className="text-lg font-bold">Verified Business Profile</CardTitle>
+              <Card className="shadow-[0_8px_30px_rgb(0,0,0,0.04)] border-slate-200/60 bg-white rounded-3xl overflow-hidden">
+                <CardHeader className="border-b border-slate-50 bg-slate-50/30 p-8">
+                  <CardTitle className="text-xl font-bold text-slate-900">Corporate Identity</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-6 pt-6 p-6">
-                  <div className="flex items-center gap-4">
-                    <div className="h-16 w-16 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold shadow-lg">
+                <CardContent className="p-8">
+                  <div className="flex items-center gap-6 mb-8">
+                    <div className="h-20 w-20 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-3xl font-black shadow-xl shadow-blue-200">
                       {profile.businessName.charAt(0)}
                     </div>
-                    <div className="space-y-1">
-                      <h3 className="font-bold text-xl leading-tight">{profile.businessName}</h3>
-                      <div className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-primary/10 text-primary border border-primary/20 uppercase tracking-wider">
+                    <div className="space-y-2">
+                      <h3 className="font-bold text-2xl text-slate-900 leading-tight">{profile.businessName}</h3>
+                      <div className="inline-flex items-center px-3 py-1 rounded-lg text-xs font-black bg-blue-50 text-blue-700 border border-blue-100 uppercase tracking-widest">
                         {profile.industry}
                       </div>
                     </div>
                   </div>
                   
-                  <div className="space-y-4 pt-6 border-t border-border">
-                    <div className="flex items-start gap-3 text-sm group">
-                      <div className="p-1.5 rounded-lg bg-muted/50 group-hover:bg-primary/10 transition-colors">
-                        <MapPin className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <div className="space-y-5 pt-8 border-t border-slate-100">
+                    <div className="flex items-start gap-4 group">
+                      <div className="p-2.5 rounded-xl bg-slate-50 group-hover:bg-blue-50 transition-colors">
+                        <MapPin className="w-5 h-5 text-slate-400 group-hover:text-blue-600 transition-colors" />
                       </div>
-                      <span className="text-muted-foreground font-medium pt-1 leading-tight">{profile.location}</span>
+                      <span className="text-slate-600 font-semibold pt-2 leading-relaxed">{profile.location}</span>
                     </div>
-                    <div className="flex items-center gap-3 text-sm group">
-                      <div className="p-1.5 rounded-lg bg-muted/50 group-hover:bg-primary/10 transition-colors">
-                        <Phone className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                    <div className="flex items-center gap-4 group">
+                      <div className="p-2.5 rounded-xl bg-slate-50 group-hover:bg-blue-50 transition-colors">
+                        <Phone className="w-5 h-5 text-slate-400 group-hover:text-blue-600 transition-colors" />
                       </div>
-                      <span className="text-muted-foreground font-medium">{profile.phone}</span>
+                      <span className="text-slate-600 font-semibold">{profile.phone}</span>
                     </div>
-                    <div className="flex items-center gap-3 text-sm group">
-                      <div className="p-1.5 rounded-lg bg-muted/50 group-hover:bg-primary/10 transition-colors">
-                        <Mail className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                    <div className="flex items-center gap-4 group">
+                      <div className="p-2.5 rounded-xl bg-slate-50 group-hover:bg-blue-50 transition-colors">
+                        <Mail className="w-5 h-5 text-slate-400 group-hover:text-blue-600 transition-colors" />
                       </div>
-                      <span className="text-muted-foreground font-medium truncate">{profile.email}</span>
+                      <span className="text-slate-600 font-semibold truncate">{profile.email}</span>
                     </div>
                   </div>
                   
-                  <Button variant="outline" className="w-full mt-4 font-bold h-11 border-border/60 hover:bg-muted hover:border-border shadow-sm">
-                    Manage Corporate Profile
+                  <Button variant="outline" className="w-full mt-10 font-bold h-12 border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl shadow-sm">
+                    Modify Profile
                   </Button>
                 </CardContent>
               </Card>
