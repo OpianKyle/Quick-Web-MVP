@@ -67,7 +67,7 @@ export default function Tenders() {
   };
 
   return (
-    <Layout>
+    <>
       <div className="space-y-6">
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -204,7 +204,7 @@ export default function Tenders() {
           </div>
         </DialogContent>
       </Dialog>
-    </Layout>
+    </>
   );
 }
 

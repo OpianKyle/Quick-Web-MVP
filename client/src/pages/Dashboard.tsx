@@ -100,7 +100,7 @@ export default function Dashboard() {
   }
 
   return (
-    <Layout>
+    <>
       <OnboardingDialog open={showOnboarding} onOpenChange={setShowOnboarding} />
 
       <div className="space-y-8">
@@ -241,7 +241,7 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-    </Layout>
+    </>
   );
 }
 

@@ -56,7 +56,7 @@ export default function Admin() {
   ];
 
   return (
-    <Layout>
+    <>
       <div className="space-y-8">
         <div>
           <h1 className="text-3xl font-display font-bold">Admin Dashboard</h1>
@@ -131,6 +131,6 @@ export default function Admin() {
           </Card>
         </div>
       </div>
-    </Layout>
+    </>
   );
 }

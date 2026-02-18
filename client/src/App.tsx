@@ -18,6 +18,8 @@ import Invoices from "@/pages/Invoices";
 import NotFound from "@/pages/not-found";
 import { useSmeProfile } from "@/hooks/use-sme";
 import { isAdminUser } from "@/lib/rbac";
+import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
 
 function Router() {
   const { user, isLoading: authLoading } = useAuth();
@@ -53,18 +55,36 @@ function Router() {
     );
   }
 
-  // Logged in -> App Routes
+  // Logged in -> App Routes with Sidebar
   return (
-    <Switch>
-      <Route path="/" component={Dashboard} />
-      <Route path="/admin" component={Admin} />
-      <Route path="/tenders" component={Tenders} />
-      <Route path="/tenders/:id" component={TenderDetail} />
-      <Route path="/website" component={WebsiteBuilder} />
-      <Route path="/social" component={SocialManager} />
-      <Route path="/invoices" component={Invoices} />
-      <Route component={NotFound} />
-    </Switch>
+    <SidebarProvider>
+      <div className="flex h-screen w-full overflow-hidden">
+        <AppSidebar />
+        <SidebarInset className="flex flex-col">
+          <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
+            <SidebarTrigger />
+            <div className="h-4 w-px bg-border mx-2" />
+            <div className="flex-1">
+              <span className="text-sm font-medium text-muted-foreground">
+                SMME Digital Enablement Platform
+              </span>
+            </div>
+          </header>
+          <div className="flex-1 overflow-auto p-4 md:p-8">
+            <Switch>
+              <Route path="/" component={Dashboard} />
+              <Route path="/admin" component={Admin} />
+              <Route path="/tenders" component={Tenders} />
+              <Route path="/tenders/:id" component={TenderDetail} />
+              <Route path="/website" component={WebsiteBuilder} />
+              <Route path="/social" component={SocialManager} />
+              <Route path="/invoices" component={Invoices} />
+              <Route component={NotFound} />
+            </Switch>
+          </div>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   );
 }
 
