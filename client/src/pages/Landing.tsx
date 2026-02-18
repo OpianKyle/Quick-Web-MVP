@@ -99,7 +99,7 @@ export default function Landing() {
             >
               <div className="relative z-10 rounded-3xl overflow-hidden shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] border-[8px] border-white ring-1 ring-black/5">
                 <img 
-                  src="https://images.unsplash.com/photo-1521791136064-7986c2959210?auto=format&fit=crop&q=80&w=1200" 
+                  src="/images/business-meeting.png" 
                   alt="Business Meeting"
                   className="w-full aspect-[4/5] object-cover" 
                 />
