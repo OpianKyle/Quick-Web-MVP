@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { Layout } from "@/components/Layout";
-import { useSmeProfile, useRedeemVoucher, useCreateSmeProfile } from "@/hooks/use-sme";
+import { useSmeProfile, useRedeemVoucher, useCreateSmeProfile, useAdminStats } from "@/hooks/use-sme";
 import { useAuth } from "@/hooks/use-auth";
 import { 
   Loader2, CheckCircle, Ticket, Store, MapPin, Phone, Mail, 
-  Share2, FileText, ShieldAlert, ShieldCheck, Briefcase 
+  Share2, FileText, ShieldAlert, ShieldCheck, Briefcase,
+  TrendingUp, Users, Activity
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,6 +26,8 @@ import { Link } from "wouter";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { isAdminUser } from "@/lib/rbac";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { DashboardStats } from "@/components/DashboardStats";
 
 function DevAdminPromotion() {
   const { toast } = useToast();
@@ -82,6 +84,7 @@ function DevAdminPromotion() {
 export default function Dashboard() {
   const { user } = useAuth();
   const { data: profile, isLoading: isLoadingProfile } = useSmeProfile();
+  const { data: stats } = useAdminStats();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const admin = isAdminUser(user);
 
@@ -99,11 +102,21 @@ export default function Dashboard() {
     );
   }
 
+  const chartData = [
+    { name: 'Mon', usage: 40 },
+    { name: 'Tue', usage: 30 },
+    { name: 'Wed', usage: 65 },
+    { name: 'Thu', usage: 45 },
+    { name: 'Fri', usage: 90 },
+    { name: 'Sat', usage: 35 },
+    { name: 'Sun', usage: 25 },
+  ];
+
   return (
     <>
       <OnboardingDialog open={showOnboarding} onOpenChange={setShowOnboarding} />
 
-      <div className="space-y-8">
+      <div className="space-y-8 pb-10">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-display font-bold">
@@ -128,6 +141,62 @@ export default function Dashboard() {
             <VoucherRedemptionCard />
           )}
         </div>
+
+        {/* Analytics Section */}
+        {stats && (
+          <div className="space-y-6">
+            <DashboardStats 
+              totalSmes={stats.totalSmes}
+              activeSubscriptions={stats.activeSubscriptions}
+              redeemedVouchers={stats.redeemedVouchers}
+            />
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base font-semibold flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4 text-primary" />
+                    Platform Activity
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="h-[240px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={chartData}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                      <XAxis dataKey="name" tickLine={false} axisLine={false} fontSize={12} />
+                      <YAxis tickLine={false} axisLine={false} fontSize={12} />
+                      <Tooltip cursor={{ fill: '#f4f4f5' }} />
+                      <Bar dataKey="usage" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base font-semibold flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-secondary" />
+                    Quick Metrics
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex justify-between items-center p-3 rounded-lg bg-muted/30">
+                    <div className="text-sm">Voucher Usage Rate</div>
+                    <div className="font-bold">{Math.round((stats.redeemedVouchers / (stats.totalSmes || 1)) * 100)}%</div>
+                  </div>
+                  <div className="flex justify-between items-center p-3 rounded-lg bg-muted/30">
+                    <div className="text-sm">Subscription Health</div>
+                    <div className="font-bold text-green-600">Excellent</div>
+                  </div>
+                  <div className="flex justify-between items-center p-3 rounded-lg bg-muted/30">
+                    <div className="text-sm">New SME Signups (24h)</div>
+                    <div className="font-bold">+12</div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        )}
 
         <div className="grid md:grid-cols-3 gap-6">
           <div className="md:col-span-2 space-y-6">
