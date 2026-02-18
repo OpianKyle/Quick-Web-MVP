@@ -26,6 +26,10 @@ export const smeProfiles = pgTable("sme_profiles", {
   location: text("location").notNull(),
   industry: text("industry").notNull(),
   productsServices: text("products_services").notNull(),
+  taxNumber: text("tax_number"),
+  beeLevel: text("bee_level"),
+  csdNumber: text("csd_number"),
+  complianceStatus: text("compliance_status").default("pending"), // pending, compliant, non-compliant
   popiaConsent: boolean("popia_consent").notNull().default(false),
   subscriptionStatus: text("subscription_status").default("inactive"), // inactive, active
   subscriptionExpiry: timestamp("subscription_expiry"),

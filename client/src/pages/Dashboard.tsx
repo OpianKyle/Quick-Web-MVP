@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { 
   Loader2, CheckCircle, Ticket, Store, MapPin, Phone, Mail, 
   Share2, FileText, ShieldAlert, ShieldCheck, Briefcase,
-  TrendingUp, Users, Activity
+  TrendingUp, Users, Activity, Scale, FileCheck, AlertCircle
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -317,6 +317,43 @@ export default function Dashboard() {
 
           <div className="space-y-10">
             {!admin && <DevAdminPromotion />}
+
+            {profile && (
+              <Card className="shadow-[0_8px_30px_rgb(0,0,0,0.04)] border-slate-200/60 bg-white rounded-3xl overflow-hidden">
+                <CardHeader className="border-b border-slate-50 bg-slate-50/30 p-8">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-xl font-bold text-slate-900">Tax & Compliance</CardTitle>
+                    <Scale className="w-5 h-5 text-slate-400" />
+                  </div>
+                </CardHeader>
+                <CardContent className="p-8 space-y-6">
+                  <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50 border border-slate-100">
+                    <div className="flex items-center gap-3">
+                      <FileCheck className={`w-5 h-5 ${profile.complianceStatus === 'compliant' ? 'text-emerald-500' : 'text-amber-500'}`} />
+                      <span className="font-bold text-slate-700">SARS Status</span>
+                    </div>
+                    <span className={`text-xs font-black uppercase tracking-widest px-2 py-1 rounded ${profile.complianceStatus === 'compliant' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
+                      {profile.complianceStatus || 'Pending'}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 rounded-xl border border-slate-100 bg-white shadow-sm">
+                      <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">B-BBEE Level</div>
+                      <div className="text-lg font-bold text-slate-900">{profile.beeLevel || "Not Set"}</div>
+                    </div>
+                    <div className="p-4 rounded-xl border border-slate-100 bg-white shadow-sm">
+                      <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">CSD Reg</div>
+                      <div className="text-lg font-bold text-slate-900 truncate">{profile.csdNumber ? "Registered" : "Pending"}</div>
+                    </div>
+                  </div>
+
+                  <Button variant="outline" className="w-full font-bold border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl shadow-sm">
+                    Update Documents
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
 
             {profile && (
               <Card className="shadow-[0_8px_30px_rgb(0,0,0,0.04)] border-slate-200/60 bg-white rounded-3xl overflow-hidden">
