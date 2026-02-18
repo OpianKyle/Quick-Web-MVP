@@ -130,7 +130,12 @@ export default function SmeRegistration() {
                       <FormItem>
                         <FormLabel>Registration Number</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter registration number" {...field} data-testid="input-registration-number" />
+                          <Input 
+                            placeholder="Enter registration number" 
+                            {...field} 
+                            value={field.value ?? ""} 
+                            data-testid="input-registration-number" 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
