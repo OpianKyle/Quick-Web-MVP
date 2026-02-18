@@ -26,8 +26,10 @@ import { Link } from "wouter";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { isAdminUser } from "@/lib/rbac";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { DashboardStats } from "@/components/DashboardStats";
+
+const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
 
 function DevAdminPromotion() {
   const { toast } = useToast();
@@ -80,6 +82,14 @@ function DevAdminPromotion() {
     </Card>
   );
 }
+
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -161,20 +171,17 @@ export default function Dashboard() {
                       <div className="p-2 bg-blue-50 rounded-lg">
                         <TrendingUp className="w-6 h-6 text-blue-600" />
                       </div>
-                      Network Activity
+                      Monthly Registrations
                     </CardTitle>
-                    <CardDescription className="text-base text-slate-500">Real-time engagement tracking</CardDescription>
+                    <CardDescription className="text-base text-slate-500">Business growth over time</CardDescription>
                   </div>
-                  <Button variant="outline" size="sm" className="font-bold border-slate-200 text-slate-600 hover:bg-slate-50 shadow-sm px-6 h-10">
-                    Analytics Report
-                  </Button>
                 </CardHeader>
                 <CardContent className="h-[340px] p-8 pt-10">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={chartData} margin={{ top: 0, right: 0, left: -25, bottom: 0 }}>
+                    <BarChart data={stats.monthlyRegistrations} margin={{ top: 0, right: 0, left: -25, bottom: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
                       <XAxis 
-                        dataKey="name" 
+                        dataKey="month" 
                         tickLine={false} 
                         axisLine={false} 
                         fontSize={13} 
@@ -196,7 +203,7 @@ export default function Dashboard() {
                           padding: '16px'
                         }}
                       />
-                      <Bar dataKey="usage" fill="#3B82F6" radius={[8, 8, 0, 0]} barSize={45} />
+                      <Bar dataKey="count" fill="#3B82F6" radius={[8, 8, 0, 0]} barSize={45} />
                     </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
@@ -208,34 +215,33 @@ export default function Dashboard() {
                     <div className="p-2 bg-amber-50 rounded-lg">
                       <Activity className="w-6 h-6 text-amber-600" />
                     </div>
-                    Market Vitals
+                    Industry Mix
                   </CardTitle>
-                  <CardDescription className="text-base text-slate-500">Core ecosystem performance</CardDescription>
+                  <CardDescription className="text-base text-slate-500">Business sector distribution</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6 p-8">
-                  <div className="group flex justify-between items-center p-6 rounded-2xl bg-slate-50 border border-slate-100 transition-all hover:bg-white hover:border-blue-200 hover:shadow-md">
-                    <div className="space-y-1">
-                      <div className="text-sm font-bold text-slate-400 uppercase tracking-widest">Conversion</div>
-                      <div className="text-lg font-bold text-slate-900">Voucher Redemptions</div>
-                    </div>
-                    <div className="text-3xl font-black text-blue-600">
-                      {Math.round((stats.redeemedVouchers / (stats.totalSmes || 1)) * 100)}%
-                    </div>
-                  </div>
-                  <div className="group flex justify-between items-center p-6 rounded-2xl bg-slate-50 border border-slate-100 transition-all hover:bg-white hover:border-emerald-200 hover:shadow-md">
-                    <div className="space-y-1">
-                      <div className="text-sm font-bold text-slate-400 uppercase tracking-widest">Stability</div>
-                      <div className="text-lg font-bold text-slate-900">Platform Health</div>
-                    </div>
-                    <div className="text-sm font-black text-emerald-700 bg-emerald-100/80 px-3 py-1.5 rounded-lg border border-emerald-200 uppercase tracking-tight">Optimal</div>
-                  </div>
-                  <div className="group flex justify-between items-center p-6 rounded-2xl bg-slate-50 border border-slate-100 transition-all hover:bg-white hover:border-amber-200 hover:shadow-md">
-                    <div className="space-y-1">
-                      <div className="text-sm font-bold text-slate-400 uppercase tracking-widest">Growth</div>
-                      <div className="text-lg font-bold text-slate-900">New Partners</div>
-                    </div>
-                    <div className="text-3xl font-black text-amber-600">+12</div>
-                  </div>
+                <CardContent className="h-[340px] p-8">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={stats.industryDistribution}
+                        innerRadius={60}
+                        outerRadius={80}
+                        paddingAngle={5}
+                        dataKey="value"
+                      >
+                        {stats.industryDistribution.map((entry: any, index: number) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip 
+                        contentStyle={{ 
+                          borderRadius: '12px', 
+                          border: 'none', 
+                          boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
+                        }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
                 </CardContent>
               </Card>
             </div>

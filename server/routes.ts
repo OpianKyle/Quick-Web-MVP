@@ -99,8 +99,39 @@ export async function registerRoutes(
       const admin = await requireAdmin(req, res);
       if (!admin) return;
       
-      const stats = await storage.getStats();
-      res.json(stats);
+      const [totalSmes, activeSubscriptions, redeemedVouchers, profiles] = await Promise.all([
+        storage.getTotalSmeCount(),
+        storage.getActiveSubscriptionCount(),
+        storage.getRedeemedVoucherCount(),
+        storage.getAllSmeProfiles(),
+      ]);
+
+      // Calculate monthly registrations (last 6 months)
+      const monthlyRegistrations = Array.from({ length: 6 }, (_, i) => {
+        const d = new Date();
+        d.setMonth(d.getMonth() - i);
+        const month = d.toLocaleString('default', { month: 'short' });
+        const count = profiles.filter(p => {
+          const pDate = new Date(p.createdAt || new Date());
+          return pDate.getMonth() === d.getMonth() && pDate.getFullYear() === d.getFullYear();
+        }).length;
+        return { month, count };
+      }).reverse();
+
+      // Calculate industry distribution
+      const industries = [...new Set(profiles.map(p => p.industry).filter(Boolean))];
+      const industryDistribution = industries.map(name => ({
+        name: name || "Other",
+        value: profiles.filter(p => p.industry === name).length
+      })).sort((a, b) => b.value - a.value).slice(0, 5);
+
+      res.json({
+        totalSmes,
+        activeSubscriptions,
+        redeemedVouchers,
+        monthlyRegistrations,
+        industryDistribution
+      });
   });
 
   // Redeem Voucher

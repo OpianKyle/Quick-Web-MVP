@@ -47,6 +47,14 @@ export const api = {
           totalSmes: z.number(),
           activeSubscriptions: z.number(),
           redeemedVouchers: z.number(),
+          monthlyRegistrations: z.array(z.object({
+            month: z.string(),
+            count: z.number(),
+          })),
+          industryDistribution: z.array(z.object({
+            name: z.string(),
+            value: z.number(),
+          })),
         }),
         401: errorSchemas.unauthorized,
       },

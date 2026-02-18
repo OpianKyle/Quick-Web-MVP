@@ -165,6 +165,9 @@ export const insertSmeProfileSchema = createInsertSchema(smeProfiles).omit({
   subscriptionStatus: true, 
   subscriptionExpiry: true, 
   createdAt: true 
+}).extend({
+  registrationType: z.enum(["registered", "registering", "informal"]).default("registered"),
+  registrationNumber: z.string().optional(),
 });
 
 export const insertVoucherSchema = createInsertSchema(vouchers).omit({

@@ -53,7 +53,13 @@ export interface IStorage {
   getInvoices(profileId: number): Promise<Invoice[]>;
   
   // Admin Stats
-  getStats(): Promise<{ totalSmes: number; activeSubscriptions: number; redeemedVouchers: number }>;
+  getStats(): Promise<{ 
+    totalSmes: number; 
+    activeSubscriptions: number; 
+    redeemedVouchers: number;
+    monthlyRegistrations: Array<{ month: string; count: number }>;
+    industryDistribution: Array<{ name: string; value: number }>;
+  }>;
 
   // Job Tenders
   listTenders(): Promise<Tender[]>;
@@ -191,15 +197,59 @@ export class DatabaseStorage implements IStorage {
     return await db.select().from(invoices).where(eq(invoices.profileId, profileId));
   }
   
-  async getStats(): Promise<{ totalSmes: number; activeSubscriptions: number; redeemedVouchers: number }> {
+  async getStats(): Promise<{ 
+    totalSmes: number; 
+    activeSubscriptions: number; 
+    redeemedVouchers: number;
+    monthlyRegistrations: Array<{ month: string; count: number }>;
+    industryDistribution: Array<{ name: string; value: number }>;
+  }> {
       const [totalSmesRes] = await db.select({ count: count() }).from(smeProfiles);
       const [activeSubsRes] = await db.select({ count: count() }).from(smeProfiles).where(eq(smeProfiles.subscriptionStatus, "active"));
       const [redeemedVouchersRes] = await db.select({ count: count() }).from(vouchers).where(eq(vouchers.status, "redeemed"));
       
+      // Get monthly registrations for the last 6 months
+      const sixMonthsAgo = new Date();
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+      
+      const allProfiles = await db.select().from(smeProfiles);
+      
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const monthlyData: Record<string, number> = {};
+      
+      // Initialize last 6 months
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date();
+        d.setMonth(d.getMonth() - i);
+        const monthKey = `${monthNames[d.getMonth()]}`;
+        monthlyData[monthKey] = 0;
+      }
+
+      allProfiles.forEach(p => {
+        if (p.createdAt) {
+          const m = new Date(p.createdAt).getMonth();
+          const monthKey = monthNames[m];
+          if (monthlyData[monthKey] !== undefined) {
+            monthlyData[monthKey]++;
+          }
+        }
+      });
+
+      const monthlyRegistrations = Object.entries(monthlyData).map(([month, count]) => ({ month, count }));
+
+      // Industry distribution
+      const industries: Record<string, number> = {};
+      allProfiles.forEach(p => {
+        industries[p.industry] = (industries[p.industry] || 0) + 1;
+      });
+      const industryDistribution = Object.entries(industries).map(([name, value]) => ({ name, value }));
+
       return {
           totalSmes: Number(totalSmesRes?.count || 0),
           activeSubscriptions: Number(activeSubsRes?.count || 0),
           redeemedVouchers: Number(redeemedVouchersRes?.count || 0),
+          monthlyRegistrations,
+          industryDistribution
       };
   }
 
