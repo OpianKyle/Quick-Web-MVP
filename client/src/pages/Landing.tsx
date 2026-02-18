@@ -29,10 +29,10 @@ export default function Landing() {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <a href="/api/login" className="text-sm font-semibold hover:text-primary transition-colors">Sign In</a>
-            <a href="/api/login" className="bg-primary text-white px-5 py-2 rounded-lg text-sm font-bold hover:scale-[1.02] active:scale-[0.98] transition-all shadow-md shadow-primary/20">
+            <button onClick={() => window.location.href = "/api/login"} className="text-sm font-semibold hover:text-primary transition-colors">Sign In</button>
+            <button onClick={() => window.location.href = "/api/login"} className="bg-primary text-white px-5 py-2 rounded-lg text-sm font-bold hover:scale-[1.02] active:scale-[0.98] transition-all shadow-md shadow-primary/20">
               Get Started
-            </a>
+            </button>
           </div>
         </div>
       </nav>
@@ -69,10 +69,10 @@ export default function Landing() {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-5">
-                <a href="/api/login" className="inline-flex items-center justify-center px-10 py-4 rounded-xl bg-primary text-white font-bold text-lg shadow-xl shadow-primary/30 hover:shadow-2xl hover:translate-y-[-2px] transition-all duration-300">
+                <button onClick={() => window.location.href = "/api/login"} className="inline-flex items-center justify-center px-10 py-4 rounded-xl bg-primary text-white font-bold text-lg shadow-xl shadow-primary/30 hover:shadow-2xl hover:translate-y-[-2px] transition-all duration-300">
                   Register Your Business
                   <ArrowRight className="ml-2.5 w-5 h-5" />
-                </a>
+                </button>
                 <button className="inline-flex items-center justify-center px-10 py-4 rounded-xl bg-white border-2 border-border text-foreground font-bold text-lg hover:bg-muted/30 transition-all">
                   Portal Guide
                 </button>
