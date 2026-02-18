@@ -89,8 +89,11 @@ export default function Dashboard() {
   const admin = isAdminUser(user);
 
   useEffect(() => {
+    // Only show onboarding if we've explicitly determined there's no profile
     if (!isLoadingProfile && !profile && !admin) {
-      setShowOnboarding(true);
+      // Small delay to ensure state has settled
+      const timer = setTimeout(() => setShowOnboarding(true), 500);
+      return () => clearTimeout(timer);
     }
   }, [profile, isLoadingProfile, admin]);
 
