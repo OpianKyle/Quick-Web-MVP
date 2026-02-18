@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import { Layout } from "@/components/Layout";
 import { useSmeProfile, useRedeemVoucher, useCreateSmeProfile } from "@/hooks/use-sme";
 import { useAuth } from "@/hooks/use-auth";
-import { Loader2, AlertCircle, CheckCircle, Ticket, Store, MapPin, Phone, Mail } from "lucide-react";
+import { 
+  Loader2, CheckCircle, Ticket, Store, MapPin, Phone, Mail, 
+  Share2, FileText, ShieldAlert, ShieldCheck, Briefcase 
+} from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertSmeProfileSchema, type InsertSmeProfile } from "@shared/schema";
@@ -20,10 +23,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Link } from "wouter";
-
-import { Share2, FileText, ShieldAlert } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { isAdminUser } from "@/lib/rbac";
 
 function DevAdminPromotion() {
   const { toast } = useToast();
@@ -83,7 +85,6 @@ export default function Dashboard() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const admin = isAdminUser(user);
 
-  // Effect to show onboarding if no profile exists
   useEffect(() => {
     if (!isLoadingProfile && !profile && !admin) {
       setShowOnboarding(true);
@@ -103,7 +104,6 @@ export default function Dashboard() {
       <OnboardingDialog open={showOnboarding} onOpenChange={setShowOnboarding} />
 
       <div className="space-y-8">
-        {/* Welcome Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-display font-bold">
@@ -245,11 +245,6 @@ export default function Dashboard() {
   );
 }
 
-// Sub-components
-
-import { Share2, FileText, ShieldCheck, Briefcase } from "lucide-react";
-import { isAdminUser } from "@/lib/rbac";
-
 function OnboardingDialog({ open, onOpenChange }: { open: boolean, onOpenChange: (o: boolean) => void }) {
   const { mutate: createProfile, isPending } = useCreateSmeProfile();
   const { user } = useAuth();
@@ -276,7 +271,6 @@ function OnboardingDialog({ open, onOpenChange }: { open: boolean, onOpenChange:
 
   return (
     <Dialog open={open} onOpenChange={(val) => {
-      // Prevent closing if submitting or strictly required
       if (!isPending) onOpenChange(val);
     }}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
