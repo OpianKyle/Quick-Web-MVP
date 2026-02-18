@@ -21,17 +21,74 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Link } from "wouter";
 
+import { Share2, FileText, ShieldAlert } from "lucide-react";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+
+function DevAdminPromotion() {
+  const { toast } = useToast();
+  const [isPending, setIsPending] = useState(false);
+
+  const promote = async () => {
+    setIsPending(true);
+    try {
+      await apiRequest("POST", "/api/admin/promote");
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      toast({
+        title: "Success",
+        description: "You have been promoted to Admin for testing purposes.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to promote to admin.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsPending(false);
+    }
+  };
+
+  if (import.meta.env.PROD) return null;
+
+  return (
+    <Card className="border-red-200 bg-red-50 dark:bg-red-950/20">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base flex items-center gap-2 text-red-700 dark:text-red-400">
+          <ShieldAlert className="w-4 h-4" />
+          Developer Tools
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-xs text-red-600 dark:text-red-300 mb-3">
+          Use this button to grant yourself Admin privileges for testing.
+        </p>
+        <Button 
+          variant="destructive" 
+          size="sm" 
+          className="w-full"
+          onClick={promote}
+          disabled={isPending}
+        >
+          {isPending ? "Promoting..." : "Become Admin"}
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function Dashboard() {
   const { user } = useAuth();
   const { data: profile, isLoading: isLoadingProfile } = useSmeProfile();
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const admin = isAdminUser(user);
 
   // Effect to show onboarding if no profile exists
   useEffect(() => {
-    if (!isLoadingProfile && !profile) {
+    if (!isLoadingProfile && !profile && !admin) {
       setShowOnboarding(true);
     }
-  }, [profile, isLoadingProfile]);
+  }, [profile, isLoadingProfile, admin]);
 
   if (isLoadingProfile) {
     return (
@@ -52,10 +109,17 @@ export default function Dashboard() {
             <h1 className="text-3xl font-display font-bold">
               Welcome back, <span className="text-primary">{user?.firstName || "Entrepreneur"}</span>
             </h1>
-            <p className="text-muted-foreground mt-1">Here is what is happening with your business today.</p>
+            <p className="text-muted-foreground mt-1">
+              {admin ? "You are logged in as an administrator." : "Here is what is happening with your business today."}
+            </p>
           </div>
           
-          {profile?.subscriptionStatus === "active" ? (
+          {admin ? (
+             <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-800 rounded-full font-medium">
+               <ShieldCheck className="w-4 h-4" />
+               Administrator Access
+             </div>
+          ) : profile?.subscriptionStatus === "active" ? (
              <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-800 rounded-full font-medium">
                <CheckCircle className="w-4 h-4" />
                Subscription Active
@@ -65,82 +129,117 @@ export default function Dashboard() {
           )}
         </div>
 
-        {profile && (
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* Quick Actions Card */}
-            <Card className="md:col-span-2 border-primary/10 shadow-lg">
-              <CardHeader>
-                <CardTitle>Your Business Tools</CardTitle>
-                <CardDescription>Access your digital enablement suite</CardDescription>
-              </CardHeader>
-              <CardContent className="grid sm:grid-cols-2 gap-4">
-                <Link href="/website">
-                  <div className="group p-4 rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5 transition-all cursor-pointer">
-                    <div className="h-10 w-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                      <Store className="w-5 h-5" />
+        <div className="grid md:grid-cols-3 gap-6">
+          <div className="md:col-span-2 space-y-6">
+            {admin && (
+              <Card className="border-primary/10 shadow-lg">
+                <CardHeader>
+                  <CardTitle>Administration</CardTitle>
+                  <CardDescription>Manage the SME platform</CardDescription>
+                </CardHeader>
+                <CardContent className="grid sm:grid-cols-2 gap-4">
+                  <Link href="/admin">
+                    <div className="group p-4 rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5 transition-all cursor-pointer">
+                      <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <ShieldCheck className="w-5 h-5" />
+                      </div>
+                      <h3 className="font-semibold text-lg">Admin Dashboard</h3>
+                      <p className="text-sm text-muted-foreground mt-1">Manage vouchers, users, and tenders</p>
                     </div>
-                    <h3 className="font-semibold text-lg">Website Builder</h3>
-                    <p className="text-sm text-muted-foreground mt-1">Manage your online presence</p>
-                  </div>
-                </Link>
-                
-                <Link href="/social">
-                  <div className="group p-4 rounded-xl border border-border hover:border-purple/50 hover:bg-purple-50 transition-all cursor-pointer">
-                    <div className="h-10 w-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                      <Share2 className="w-5 h-5" />
+                  </Link>
+                  <Link href="/tenders">
+                    <div className="group p-4 rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5 transition-all cursor-pointer">
+                      <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <Briefcase className="w-5 h-5" />
+                      </div>
+                      <h3 className="font-semibold text-lg">Manage Tenders</h3>
+                      <p className="text-sm text-muted-foreground mt-1">Post and review job tenders</p>
                     </div>
-                    <h3 className="font-semibold text-lg">Social Media</h3>
-                    <p className="text-sm text-muted-foreground mt-1">Create engaging posts</p>
-                  </div>
-                </Link>
+                  </Link>
+                </CardContent>
+              </Card>
+            )}
 
-                <Link href="/invoices">
-                  <div className="group p-4 rounded-xl border border-border hover:border-yellow/50 hover:bg-yellow-50 transition-all cursor-pointer">
-                    <div className="h-10 w-10 rounded-lg bg-yellow-100 text-yellow-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                      <FileText className="w-5 h-5" />
+            {profile && (
+              <Card className="border-primary/10 shadow-lg">
+                <CardHeader>
+                  <CardTitle>Your Business Tools</CardTitle>
+                  <CardDescription>Access your digital enablement suite</CardDescription>
+                </CardHeader>
+                <CardContent className="grid sm:grid-cols-2 gap-4">
+                  <Link href="/website">
+                    <div className="group p-4 rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5 transition-all cursor-pointer">
+                      <div className="h-10 w-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <Store className="w-5 h-5" />
+                      </div>
+                      <h3 className="font-semibold text-lg">Website Builder</h3>
+                      <p className="text-sm text-muted-foreground mt-1">Manage your online presence</p>
                     </div>
-                    <h3 className="font-semibold text-lg">Invoicing</h3>
-                    <p className="text-sm text-muted-foreground mt-1">Send professional bills</p>
-                  </div>
-                </Link>
+                  </Link>
+                  
+                  <Link href="/social">
+                    <div className="group p-4 rounded-xl border border-border hover:border-purple/50 hover:bg-purple-50 transition-all cursor-pointer">
+                      <div className="h-10 w-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <Share2 className="w-5 h-5" />
+                      </div>
+                      <h3 className="font-semibold text-lg">Social Media</h3>
+                      <p className="text-sm text-muted-foreground mt-1">Create engaging posts</p>
+                    </div>
+                  </Link>
 
-                <div className="p-4 rounded-xl border border-dashed border-border flex flex-col items-center justify-center text-center text-muted-foreground">
-                  <span className="text-sm">More tools coming soon...</span>
-                </div>
-              </CardContent>
-            </Card>
+                  <Link href="/invoices">
+                    <div className="group p-4 rounded-xl border border-border hover:border-yellow/50 hover:bg-yellow-50 transition-all cursor-pointer">
+                      <div className="h-10 w-10 rounded-lg bg-yellow-100 text-yellow-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <FileText className="w-5 h-5" />
+                      </div>
+                      <h3 className="font-semibold text-lg">Invoicing</h3>
+                      <p className="text-sm text-muted-foreground mt-1">Send professional bills</p>
+                    </div>
+                  </Link>
 
-            {/* Profile Summary Card */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Business Profile</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <h3 className="font-semibold text-lg">{profile.businessName}</h3>
-                  <p className="text-sm text-muted-foreground">{profile.industry}</p>
-                </div>
-                
-                <div className="space-y-3 pt-4 border-t border-border">
-                  <div className="flex items-center gap-3 text-sm">
-                    <MapPin className="w-4 h-4 text-primary" />
-                    <span>{profile.location}</span>
+                  <div className="p-4 rounded-xl border border-dashed border-border flex flex-col items-center justify-center text-center text-muted-foreground">
+                    <span className="text-sm">More tools coming soon...</span>
                   </div>
-                  <div className="flex items-center gap-3 text-sm">
-                    <Phone className="w-4 h-4 text-primary" />
-                    <span>{profile.phone}</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-sm">
-                    <Mail className="w-4 h-4 text-primary" />
-                    <span>{profile.email}</span>
-                  </div>
-                </div>
-                
-                <Button variant="outline" className="w-full mt-2">Edit Profile</Button>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            )}
           </div>
-        )}
+
+          <div className="space-y-6">
+            {!admin && <DevAdminPromotion />}
+
+            {profile && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Business Profile</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <h3 className="font-semibold text-lg">{profile.businessName}</h3>
+                    <p className="text-sm text-muted-foreground">{profile.industry}</p>
+                  </div>
+                  
+                  <div className="space-y-3 pt-4 border-t border-border">
+                    <div className="flex items-center gap-3 text-sm">
+                      <MapPin className="w-4 h-4 text-primary" />
+                      <span>{profile.location}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-sm">
+                      <Phone className="w-4 h-4 text-primary" />
+                      <span>{profile.phone}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-sm">
+                      <Mail className="w-4 h-4 text-primary" />
+                      <span>{profile.email}</span>
+                    </div>
+                  </div>
+                  
+                  <Button variant="outline" className="w-full mt-2">Edit Profile</Button>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </div>
       </div>
     </Layout>
   );
@@ -148,7 +247,8 @@ export default function Dashboard() {
 
 // Sub-components
 
-import { Share2, FileText } from "lucide-react";
+import { Share2, FileText, ShieldCheck, Briefcase } from "lucide-react";
+import { isAdminUser } from "@/lib/rbac";
 
 function OnboardingDialog({ open, onOpenChange }: { open: boolean, onOpenChange: (o: boolean) => void }) {
   const { mutate: createProfile, isPending } = useCreateSmeProfile();
